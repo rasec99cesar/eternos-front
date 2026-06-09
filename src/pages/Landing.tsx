@@ -70,6 +70,7 @@ function FaqItem({ q, a }: { q: string; a: string }) {
 
 export default function LandingPage() {
   const pageRef = useRef<HTMLDivElement>(null);
+  const pricingRef = useRef<HTMLDivElement>(null);
   const [showSticky, setShowSticky] = useState(false);
   const [proofCount, setProofCount] = useState(7432);
 
@@ -88,6 +89,17 @@ export default function LandingPage() {
     );
     document.querySelectorAll('.reveal').forEach((el) => observer.observe(el));
 
+    const pricingObserver = new IntersectionObserver(
+      ([entry]) => {
+        if (entry?.isIntersecting) {
+          trackEvent('pricing_view');
+          pricingObserver.disconnect();
+        }
+      },
+      { threshold: 0.35 }
+    );
+    if (pricingRef.current) pricingObserver.observe(pricingRef.current);
+
     // Sticky CTA
     const heroEl = document.querySelector('#hero-section');
     const onScroll = () => {
@@ -96,7 +108,12 @@ export default function LandingPage() {
     };
     window.addEventListener('scroll', onScroll, { passive: true });
 
-    return () => { clearInterval(id); observer.disconnect(); window.removeEventListener('scroll', onScroll); };
+    return () => {
+      clearInterval(id);
+      observer.disconnect();
+      pricingObserver.disconnect();
+      window.removeEventListener('scroll', onScroll);
+    };
   }, []);
 
   return (
@@ -312,7 +329,7 @@ export default function LandingPage() {
       {/* ── OFFER ───────────────────────────────────────────────────── */}
       <section className={styles.offerSec} id="oferta">
         <div className="wrap">
-          <div className="center reveal" onViewportEntry={() => trackEvent('pricing_view')}>
+          <div ref={pricingRef} className="center reveal">
             <span className="eyebrow eyebrow--light eyebrow--center">A oferta</span>
             <h2 className="h2" style={{ color: '#fff', margin: '22px 0 16px' }}>
               Dois jeitos de contar<br />a mesma história.
