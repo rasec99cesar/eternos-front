@@ -1,0 +1,118 @@
+.nav {
+  position: fixed;
+  inset: 0 0 auto 0;
+  z-index: 50;
+  transition: background .3s, box-shadow .3s, border-color .3s;
+  border-bottom: 1px solid transparent;
+}
+
+.scrolled {
+  background: rgba(251, 243, 241, 0.88);
+  backdrop-filter: saturate(1.2) blur(14px);
+  -webkit-backdrop-filter: saturate(1.2) blur(14px);
+  border-bottom-color: var(--line);
+}
+
+.navIn {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 76px;
+}
+
+.brand {
+  font-family: var(--serif);
+  font-weight: 700;
+  font-size: 25px;
+  letter-spacing: -.01em;
+  color: var(--ink);
+  text-decoration: none;
+  display: flex;
+  align-items: baseline;
+  gap: 2px;
+}
+
+.dot { color: var(--terra); }
+
+.links {
+  display: flex;
+  align-items: center;
+  gap: 34px;
+}
+
+.links a {
+  font-family: var(--ui);
+  font-weight: 500;
+  font-size: 15px;
+  color: var(--ink-2);
+  text-decoration: none;
+  transition: color .2s;
+}
+
+.links a:hover { color: var(--ink); }
+
+.cta {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+}
+
+.count {
+  font-family: var(--ui);
+  font-size: 13px;
+  color: var(--ink-3);
+  display: flex;
+  align-items: center;
+  gap: 7px;
+}
+
+.logoutBtn {
+  font-family: var(--ui);
+  font-size: 14px;
+  color: var(--ink-3);
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 4px 8px;
+  transition: color .2s;
+}
+.logoutBtn:hover { color: var(--ink); }
+
+.burger {
+  display: none;
+  background: none;
+  border: 0;
+  cursor: pointer;
+  padding: 8px;
+}
+
+.burger span {
+  display: block;
+  width: 24px;
+  height: 2px;
+  background: var(--ink);
+  margin: 5px 0;
+  transition: .3s;
+}
+
+@media (max-width: 900px) {
+  .links { display: none; }
+  .count { display: none; }
+  .burger { display: block; }
+
+  .links.open {
+    display: flex;
+    flex-direction: column;
+    position: fixed;
+    inset: 76px 0 0 0;
+    background: var(--bg);
+    padding: 32px var(--gut);
+    gap: 24px;
+    align-items: flex-start;
+    z-index: 40;
+  }
+
+  .links.open a {
+    font-size: 22px;
+  }
+}
