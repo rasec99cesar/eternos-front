@@ -9,7 +9,9 @@
     "preview": "vite preview",
     "lint": "eslint src --ext .ts,.tsx",
     "typecheck": "tsc --noEmit",
-    "format": "prettier --write src"
+    "format": "prettier --write src",
+    "start": "npm run build && vite preview --host localhost",
+    "serve": "vite preview --host localhost"
   },
   "dependencies": {
     "@tanstack/react-query": "^5.25.0",

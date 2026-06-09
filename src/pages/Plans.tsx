@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import { api } from '../services/api';
 import { trackEvent } from '../utils/analytics';
@@ -36,9 +36,12 @@ export default function PlansPage() {
   const { pageId } = useParams<{ pageId: string }>();
   const navigate = useNavigate();
   const [selected, setSelected] = useState<'sempre' | 'eterno'>('eterno');
-  const [bump, setBump] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+
+  useEffect(() => {
+    if (pageId) sessionStorage.setItem('checkout_page_id', pageId);
+  }, [pageId]);
 
   async function handleCheckout() {
     if (!pageId) return;
@@ -46,14 +49,14 @@ export default function PlansPage() {
     setError('');
     trackEvent('checkout_start');
     trackEvent('plan_select', { plan: selected });
-    if (bump) trackEvent('order_bump_select');
 
     try {
-      const { url } = await api.checkout.createSession({
+      const { url, sessionId } = await api.checkout.createSession({
         pageId,
         plan: selected,
-        includeOrderBump: bump,
       });
+      sessionStorage.setItem('checkout_page_id', pageId);
+      sessionStorage.setItem('checkout_session_id', sessionId);
       trackEvent('publish_checkout_created');
       trackEvent('publish_checkout_redirect');
       window.location.href = url;
@@ -67,7 +70,7 @@ export default function PlansPage() {
   return (
     <div className={styles.page}>
       <nav className={styles.topBar}>
-        <Link to={`/editor/${pageId}`} className={styles.back}>← Voltar ao editor</Link>
+        <Link to="/criar" className={styles.back}>← Trocar template</Link>
         <span className={styles.brand}>Sempre<span style={{ color: 'var(--terra)' }}>.</span></span>
         <span />
       </nav>
@@ -101,33 +104,15 @@ export default function PlansPage() {
           ))}
         </div>
 
-        {/* Order bump */}
-        <label className={`${styles.bump} ${bump ? styles.bumpOn : ''}`}>
-          <input type="checkbox" checked={bump} onChange={(e) => { setBump(e.target.checked); trackEvent(e.target.checked ? 'order_bump_select' : 'order_bump_remove'); }} style={{ display: 'none' }} />
-          <div className={styles.bumpCheck}>{bump ? '✓' : ''}</div>
-          <div>
-            <div className={styles.bumpTitle}>+ Moldura especial de Dia dos Namorados</div>
-            <div className={styles.bumpSub}>Uma moldura exclusiva para tornar a página ainda mais especial. <strong>R$ 9,90</strong></div>
-          </div>
-        </label>
-
         {/* Summary */}
         <div className={styles.summary}>
           <div className={styles.summaryRow}>
             <span>Plano {selected === 'sempre' ? 'Sempre' : 'Eterno'}</span>
             <span>{selected === 'sempre' ? 'R$ 27,90' : 'R$ 37,90'}</span>
           </div>
-          {bump && (
-            <div className={styles.summaryRow}>
-              <span>Moldura especial</span>
-              <span>R$ 9,90</span>
-            </div>
-          )}
           <div className={`${styles.summaryRow} ${styles.summaryTotal}`}>
             <span>Total</span>
-            <span>
-              R$ {((selected === 'sempre' ? 27.9 : 37.9) + (bump ? 9.9 : 0)).toFixed(2).replace('.', ',')}
-            </span>
+            <span>{selected === 'sempre' ? 'R$ 27,90' : 'R$ 37,90'}</span>
           </div>
         </div>
 
@@ -139,11 +124,11 @@ export default function PlansPage() {
           onClick={handleCheckout}
           disabled={loading}
         >
-          {loading ? <span className="spinner" /> : `Pagar e publicar →`}
+          {loading ? <span className="spinner" /> : `Pagar e liberar editor →`}
         </button>
 
         <p style={{ textAlign: 'center', fontFamily: 'var(--ui)', fontSize: 13, color: 'var(--ink-3)', marginTop: 16 }}>
-          🔒 Pagamento 100% seguro via Stripe · Garantia de 7 dias
+          🔒 Pagamento 100% seguro via Stripe · O editor libera após confirmação
         </p>
       </div>
     </div>

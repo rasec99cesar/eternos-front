@@ -8,6 +8,16 @@ import styles from './Landing.module.css';
 
 // Demo start date — 15 sep 2018 at 21:30
 const DEMO_START = new Date('2018-09-15T21:30:00');
+const THEME_STORAGE_KEY = 'sempre-theme';
+type LandingTheme = 'rose' | 'bordo' | 'terracota' | 'lavanda';
+const LANDING_PALETTES: Array<{ key: LandingTheme; name: string; chips: string[] }> = [
+  { key: 'rose', name: 'Rose', chips: ['#FFF7F5', '#E8A0A7', '#BC4257'] },
+  { key: 'bordo', name: 'Bordo', chips: ['#FAF4EF', '#B07C6C', '#A6293A'] },
+  { key: 'terracota', name: 'Terracota', chips: ['#FAF7F2', '#D19A85', '#C4614A'] },
+  { key: 'lavanda', name: 'Lavanda', chips: ['#F8F4F7', '#B284A8', '#A85077'] },
+];
+const isLandingTheme = (value: string | null): value is LandingTheme =>
+  value === 'rose' || value === 'bordo' || value === 'terracota' || value === 'lavanda';
 
 function BigCounter() {
   const { days, hours, mins, secs } = useCounter(DEMO_START);
@@ -71,13 +81,45 @@ function FaqItem({ q, a }: { q: string; a: string }) {
 export default function LandingPage() {
   const pageRef = useRef<HTMLDivElement>(null);
   const pricingRef = useRef<HTMLDivElement>(null);
+  const paletteRef = useRef<HTMLDivElement>(null);
   const [showSticky, setShowSticky] = useState(false);
   const [proofCount, setProofCount] = useState(7432);
+  const [paletteOpen, setPaletteOpen] = useState(false);
+  const [landingTheme, setLandingTheme] = useState<LandingTheme>('rose');
+
+  const applyLandingTheme = (theme: LandingTheme) => {
+    setLandingTheme(theme);
+    if (theme === 'rose') {
+      document.documentElement.removeAttribute('data-theme');
+    } else {
+      document.documentElement.dataset.theme = theme;
+    }
+    window.localStorage.setItem(THEME_STORAGE_KEY, theme);
+  };
+
+  useEffect(() => {
+    const savedTheme = window.localStorage.getItem(THEME_STORAGE_KEY);
+    applyLandingTheme(isLandingTheme(savedTheme) ? savedTheme : 'rose');
+    return () => {
+      document.documentElement.removeAttribute('data-theme');
+    };
+  }, []);
+
+  useEffect(() => {
+    if (!paletteOpen) return;
+    const closeOnOutsideClick = (event: MouseEvent) => {
+      if (!paletteRef.current?.contains(event.target as Node)) {
+        setPaletteOpen(false);
+      }
+    };
+    document.addEventListener('mousedown', closeOnOutsideClick);
+    return () => document.removeEventListener('mousedown', closeOnOutsideClick);
+  }, [paletteOpen]);
 
   useEffect(() => {
     trackEvent('landing_view');
 
-    // Proof counter bump
+    // Proof counter increment
     const id = setInterval(() => {
       setProofCount((n) => n + (Math.random() < 0.6 ? 1 : 0));
     }, 4200);
@@ -134,14 +176,14 @@ export default function LandingPage() {
               </p>
               <div className={styles.heroCtaRow}>
                 <Link
-                  to="/entrar"
+                  to="/criar"
                   className="btn btn--primary btn--lg"
                   onClick={() => trackEvent('hero_cta_click')}
                 >
                   Criar a nossa página <span className="arrow">→</span>
                 </Link>
                 <a
-                  href="#contador"
+                  href="#exemplos"
                   className="btn-text"
                   onClick={() => trackEvent('secondary_cta_click')}
                 >
@@ -193,72 +235,137 @@ export default function LandingPage() {
           </div>
           <p className={styles.counterSince}>desde 15 de setembro de 2018 · o primeiro beijo</p>
           <div className={`${styles.counterCta} reveal`}>
-            <Link to="/entrar" className="btn btn--primary btn--lg" onClick={() => trackEvent('secondary_cta_click')}>
+            <Link to="/criar" className="btn btn--primary btn--lg" onClick={() => trackEvent('secondary_cta_click')}>
               Quero um counter assim para nós <span className="arrow">→</span>
             </Link>
           </div>
         </div>
       </section>
 
-      {/* ── STORYTELLING ───────────────────────────────────────────── */}
-      <section className={`section prose-sec`} id="como">
+      {/* ── A IDEIA / table-sec ─────────────────────────────────────── */}
+      <section className={`section ${styles.tableSec}`} id="como">
         <div className="wrap">
-          <div className={`${styles.storyCols} reveal`}>
-            <div>
-              <span className="eyebrow">O problema</span>
-              <p className={`${styles.pull} reveal`}>Você guarda as fotos mais importantes da sua vida no mesmo lugar onde guarda screenshot de lista de supermercado.</p>
-            </div>
-            <div>
-              <p style={{ fontSize: 'clamp(17px,1.9vw,20px)', color: 'var(--ink-2)', lineHeight: 1.7 }} className="reveal">
-                Tem uma foto no seu celular. Você sabe qual é. Aquela do começo — quando tudo era novidade e vocês tinham tempo pra tudo.
-              </p>
-              <p style={{ fontSize: 'clamp(17px,1.9vw,20px)', color: 'var(--ink-2)', lineHeight: 1.7 }} className="reveal">
-                Ela está no rolo da câmera, entre uma foto de recibo e um print de conversa que você nem lembra por quê salvou. <strong style={{ color: 'var(--ink)' }}>Ela está perdida.</strong>
-              </p>
-              <p className={`${styles.accentLine} reveal`}>"E com ela, um pouco da história de vocês."</p>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* ── DEMO / POLAROIDS ────────────────────────────────────────── */}
-      <section className={`section ${styles.tableSec}`} id="exemplos">
-        <div className="wrap">
-          <div className="center reveal">
-            <span className="eyebrow eyebrow--center">Como fica</span>
-            <h2 className="h2" style={{ marginTop: 20 }}>
-              Em 5 minutos, vocês ganham<br /><em>uma casa própria na internet.</em>
+          <div className="measure reveal">
+            <span className="eyebrow">A ideia</span>
+            <h2 className="h2" style={{ margin: '24px 0 18px' }}>
+              Tem uma foto no celular de vocês que nunca foi deletada. Ela merece mais do que o rolo da câmera.
             </h2>
+            <p className="lede">
+              Redes sociais somem, algoritmos enterram, contas são desativadas — e nada que você posta é seu de verdade. O <em className="terra">Sempre</em> é a página exclusiva do relacionamento de vocês: um lugar permanente, com endereço próprio e um contador que não para nunca. Pronto em 5 minutos.
+            </p>
           </div>
 
           <div className={styles.tableScene}>
-            <div className={`polaroid ${styles.polyA}`}>
-              <img style={{ width: 190, height: 240 }} src="https://images.unsplash.com/photo-1529634806980-85c3dd6d34ac?w=380&h=480&fit=crop&q=80" alt="casal viagem" />
+            <div className={`polaroid ${styles.polyA} reveal`}>
+              <img src="https://images.unsplash.com/photo-1511285560929-80b456fea0bc?w=380&h=320&fit=crop&q=80" alt="casal com balões" />
+              <div className="cap">tudo era novidade</div>
             </div>
-            <div className={`polaroid ${styles.polyB}`}>
-              <img style={{ width: 200, height: 160 }} src="https://images.unsplash.com/photo-1469371670807-013ccf25f16a?w=400&h=320&fit=crop&q=80" alt="casal jantar" />
+            <div className={`polaroid ${styles.polyB} reveal`}>
+              <img src="https://images.unsplash.com/photo-1465495976277-4387d4b0b4c6?w=340&h=400&fit=crop&q=80" alt="mãos com alianças" />
+              <div className="cap">a viagem</div>
             </div>
-            <div className={`polaroid ${styles.polyC}`}>
-              <img style={{ width: 180, height: 220 }} src="https://images.unsplash.com/photo-1516589178581-6cd7833ae3b2?w=360&h=440&fit=crop&q=80" alt="casal mãos" />
+            <div className={`polaroid ${styles.polyC} reveal`}>
+              <img src="https://images.unsplash.com/photo-1469571486292-0ba58a3f068b?w=400&h=300&fit=crop&q=80" alt="mãos segurando coração" />
+              <div className="cap">hoje</div>
             </div>
-            <div className={`polaroid ${styles.polyCenter}`}>
-              <img style={{ width: 250, height: 300 }} src="https://images.unsplash.com/photo-1545389336-cf090694435e?w=500&h=600&fit=crop&q=80" alt="casal principal" />
-              <div className="cap">a nossa história</div>
+            <div className={`polaroid ${styles.polyCenter} reveal`}>
+              <img src="https://images.unsplash.com/photo-1494774157365-9e04c6720e47?w=600&h=660&fit=crop&q=80" alt="casal ao pôr do sol" />
+              <div className="cap">a nossa favorita</div>
             </div>
           </div>
 
           <div className={styles.demoFeature}>
             {[
-              { n: '∞', title: 'Contador ao vivo', desc: 'Dias, horas, minutos e segundos — contando agora mesmo.' },
-              { n: '3+', title: 'Fotos Polaroid', desc: 'Layout editorial com fotos inclinadas como num álbum físico.' },
-              { n: '♥', title: 'Link exclusivo', desc: 'Um endereço só de vocês para compartilhar e guardar.' },
-              { n: '7', title: 'Garantia de dias', desc: 'Se não valer, a gente devolve sem perguntas.' },
+              { n: '01', title: 'Fotos em Polaroid', desc: 'Espalhadas como se estivessem em cima de uma mesa.' },
+              { n: '02', title: 'Uma foto central', desc: 'A favorita de vocês, no centro de tudo.' },
+              { n: '03', title: 'A história de vocês', desc: 'Fotos e texto. Você escreve o que quiser.' },
+              { n: '04', title: 'Contador em tempo real', desc: 'Agora mesmo, enquanto você lê isso, ele já está rodando.' },
             ].map((f) => (
-              <div key={f.title} className={`${styles.feat} reveal`} onClick={() => trackEvent('example_click')}>
+              <div key={f.title} className={`${styles.feat} reveal`}>
                 <div className={styles.featN}>{f.n}</div>
                 <h4 className={styles.featTitle}>{f.title}</h4>
                 <p className={styles.featDesc}>{f.desc}</p>
               </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ── EXEMPLOS REAIS ──────────────────────────────────────────── */}
+      <section className="section" id="exemplos">
+        <div className="wrap">
+          <div className="reveal">
+            <span className="eyebrow">Exemplos reais</span>
+            <h2 className="h2" style={{ margin: '22px 0 16px' }}>
+              Não é só pra namoro. É pra <em className="terra">toda história que merece durar.</em>
+            </h2>
+            <p className="lede" style={{ maxWidth: '54ch' }}>
+              Cada momento pede um tom. Veja três páginas de verdade — clique e sinta o contador correndo em cada uma delas.
+            </p>
+          </div>
+          <div className={styles.examplesGrid}>
+            {[
+              {
+                href: '/exemplos/casamento',
+                terra: '#A6293A',
+                tint: '#FAF4EF',
+                tag: 'Casamento',
+                chips: ['#FAF4EF', '#B07C6C', '#A6293A'],
+                img: 'https://images.unsplash.com/photo-1591604466107-ec97de577aff?w=640&h=480&fit=crop&q=80',
+                imgAlt: 'casal de noivos abraçados',
+                mini: 'Casados há 1 ano · tema Bordô',
+                h3: 'Marina & Thiago',
+                p: 'Do "sim" diante de todo mundo ao "pra sempre" que só os dois entendem. Um ano depois, o contador continua marcando cada segundo de vida a dois.',
+                link: 'Abrir a página deles →',
+              },
+              {
+                href: '/exemplos/viagem',
+                terra: '#C4614A',
+                tint: '#FAF7F2',
+                tag: 'Viagem',
+                chips: ['#FAF7F2', '#8B6B4A', '#C4614A'],
+                img: 'https://images.unsplash.com/photo-1476514525535-07fb3b4ae5f1?w=640&h=480&fit=crop&q=80',
+                imgAlt: 'casal de barco em lago entre montanhas',
+                mini: '30 dias de estrada · tema Terracota',
+                h3: 'Bea & Léo',
+                p: 'Dois mochilões, mil quilômetros e a certeza de que casa é onde um está com o outro. A viagem acabou — a memória dela nunca para.',
+                link: 'Abrir a página deles →',
+              },
+              {
+                href: '/exemplos/pedido',
+                terra: '#A85077',
+                tint: '#F8F4F7',
+                tag: 'Pedido de namoro',
+                chips: ['#F8F4F7', '#B284A8', '#A85077'],
+                img: 'https://images.unsplash.com/photo-1494774157365-9e04c6720e47?w=640&h=480&fit=crop&q=80',
+                imgAlt: 'casal ao pôr do sol no momento do pedido',
+                mini: 'Juntos há 3 meses · tema Lavanda',
+                h3: 'Júlia & Pedro',
+                p: 'O joelho no chão, a voz tremendo e um "sim" que ecoou no pôr do sol. Foi ali que o contador começou — e ele não parou mais.',
+                link: 'Abrir a página deles →',
+              },
+            ].map((card) => (
+              <Link
+                key={card.href}
+                to={card.href}
+                className={`${styles.exCard} reveal`}
+                style={{ '--terra': card.terra, '--tint': card.tint } as React.CSSProperties}
+                onClick={() => trackEvent('example_click')}
+              >
+                <div className={styles.exCardImg}>
+                  <span className={styles.exCardTag}>{card.tag}</span>
+                  <span className={styles.exCardChip}>
+                    {card.chips.map((c) => <i key={c} style={{ background: c }} />)}
+                  </span>
+                  <img src={card.img} alt={card.imgAlt} />
+                </div>
+                <div className={styles.exCardBody}>
+                  <div className={styles.exCardMini}><span className={styles.live} />{ card.mini}</div>
+                  <h3>{card.h3}</h3>
+                  <p>{card.p}</p>
+                  <span className={styles.exCardLink}>{card.link}</span>
+                </div>
+              </Link>
             ))}
           </div>
         </div>
@@ -393,9 +500,8 @@ export default function LandingPage() {
             <FaqItem q="Precisa instalar alguma coisa?" a="Não. Funciona pelo navegador, em qualquer celular ou computador. Você entra só com o seu e-mail e um código de verificação — sem senha e sem rede social." />
             <FaqItem q="Quanto tempo leva pra criar?" a="5 minutos no máximo. Você sobe as fotos, escreve os textos, escolhe a data do contador — feito." />
             <FaqItem q="Minha página some depois de um tempo?" a="Não. A página fica no ar enquanto o plano estiver ativo. Para quem compra agora, garantimos 12 meses sem custo adicional." />
-            <FaqItem q="Posso editar depois?" a="Sim, quantas vezes quiser. Trocou a foto favorita? Quer adicionar um novo texto? Sem custo, sem limite." />
-            <FaqItem q="E se eu quiser dar de presente?" a="Na confirmação de compra você recebe um link de acesso. Pode encaminhar pra quem quiser que a pessoa configura a própria página." />
-            <FaqItem q="O link é público?" a="Você decide. Pode ser privado (só quem tem o link acessa) ou público. A escolha é sua." />
+            <FaqItem q="Posso editar depois?" a="Sim, quantas vezes quiser. Trocou a foto favorita? Quer adicionar um novo texto? Sem custo." />          
+            <FaqItem q="O link é público?" a="Sim, poderá ser compartilhada por você com quem quiser. Após a publicação, qualquer pessoa que tiver o link poderá acessar e visualizar a página." />
           </div>
         </div>
       </section>
@@ -415,7 +521,7 @@ export default function LandingPage() {
             Você leu até aqui porque sabe que esse relacionamento merece mais do que uma mensagem no WhatsApp.
           </p>
           <div className={`${styles.finalCta} reveal`}>
-            <Link to="/entrar" className="btn btn--dark btn--lg" onClick={() => trackEvent('hero_cta_click')}>
+            <Link to="/criar" className="btn btn--dark btn--lg" onClick={() => trackEvent('hero_cta_click')}>
               Eternize este momento <span className="arrow">→</span>
             </Link>
             <p className="micro" style={{ marginTop: 14 }}>A partir de R$ 27,90 · Acesso imediato · Garantia de 7 dias</p>
@@ -429,7 +535,41 @@ export default function LandingPage() {
       <div className={`${styles.stickyCta} ${showSticky ? styles.stickyShow : ''}`}>
         <div className={styles.stickyRow}>
           <div className={styles.stickyPrice}>R$ 27,90 <small>a partir de · 2 planos</small></div>
-          <Link to="/entrar" className="btn btn--primary" onClick={() => trackEvent('hero_cta_click')}>Começar →</Link>
+          <Link to="/criar" className="btn btn--primary" onClick={() => trackEvent('hero_cta_click')}>Começar →</Link>
+        </div>
+      </div>
+
+      <div ref={paletteRef} className={`${styles.palette} ${paletteOpen ? styles.paletteOpen : ''}`}>
+        <button
+          className={styles.paletteToggle}
+          type="button"
+          aria-haspopup="true"
+          aria-expanded={paletteOpen}
+          onClick={() => setPaletteOpen((open) => !open)}
+        >
+          <span className={styles.heart}>♥</span> Paleta
+        </button>
+        <div className={styles.paletteMenu} role="menu" aria-label="Escolha o tom de amor">
+          <div className={styles.paletteTitle}>Escolha o tom de amor</div>
+          {LANDING_PALETTES.map((palette) => (
+            <button
+              key={palette.key}
+              className={styles.swatch}
+              type="button"
+              role="menuitemradio"
+              aria-checked={landingTheme === palette.key}
+              onClick={() => {
+                applyLandingTheme(palette.key);
+                setPaletteOpen(false);
+              }}
+            >
+              <span className={styles.chips} aria-hidden="true">
+                {palette.chips.map((chip) => <i key={chip} style={{ background: chip }} />)}
+              </span>
+              <span className={styles.nm}>{palette.name}</span>
+              <span className={styles.check} aria-hidden="true">✓</span>
+            </button>
+          ))}
         </div>
       </div>
     </div>

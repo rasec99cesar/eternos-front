@@ -1,7 +1,14 @@
-import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import { BrowserRouter, Routes, Route, useLocation } from 'react-router-dom';
+import { useEffect } from 'react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { AuthProvider } from './contexts/AuthContext';
 import { ProtectedRoute } from './components/ProtectedRoute';
+
+function ScrollToTop() {
+  const { pathname } = useLocation();
+  useEffect(() => { window.scrollTo(0, 0); }, [pathname]);
+  return null;
+}
 
 import LandingPage from './pages/Landing';
 import AuthPage from './pages/Auth';
@@ -11,6 +18,7 @@ import PlansPage from './pages/Plans';
 import PaymentApprovedPage from './pages/PaymentApproved';
 import MyPagesPage from './pages/MyPages';
 import PublicPageView from './pages/PublicPage';
+import ExamplePage from './pages/ExamplePage';
 import NotFoundPage from './pages/NotFound';
 
 const queryClient = new QueryClient({
@@ -27,11 +35,13 @@ export default function App() {
     <QueryClientProvider client={queryClient}>
       <BrowserRouter>
         <AuthProvider>
+          <ScrollToTop />
           <Routes>
             {/* Public */}
             <Route path="/" element={<LandingPage />} />
             <Route path="/entrar" element={<AuthPage />} />
             <Route path="/p/:slug" element={<PublicPageView />} />
+            <Route path="/exemplos/:slug" element={<ExamplePage />} />
             <Route path="/404" element={<NotFoundPage />} />
 
             {/* Protected */}

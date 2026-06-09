@@ -1,5 +1,6 @@
 /* ============================================================
-   SEMPRE — public page (mirrors couple.css / ExamplePage)
+   SEMPRE — exemplo pages (mirrors couple.css)
+   Fonte: couple.css
    ============================================================ */
 
 .page { min-height: 100vh; background: var(--bg); }
@@ -12,6 +13,7 @@
 }
 
 /* ---- top bar ---- */
+/* Fonte: couple.css lines 9-20 */
 .cbar {
   position: sticky;
   top: 0;
@@ -39,25 +41,21 @@
 
 .pt { color: var(--terra); }
 
-.cbarShare { display: flex; gap: 8px; align-items: center; }
-
-.cbarCopy, .cbarWa {
+.cbarBack {
   font-family: var(--ui);
-  font-size: 13px;
+  font-size: 14px;
   font-weight: 500;
-  border-radius: 99px;
-  padding: 8px 16px;
-  cursor: pointer;
-  transition: background .2s, color .2s;
-  border: 1.5px solid var(--line);
-  background: transparent;
   color: var(--ink-2);
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  transition: color .2s;
 }
-.cbarCopy:hover { background: var(--bg-2); color: var(--ink); }
-.cbarWa { color: #25d366; border-color: rgba(37,211,102,.3); }
-.cbarWa:hover { background: rgba(37,211,102,.08); }
+.cbarBack:hover { color: var(--terra); }
 
 /* ---- hero ---- */
+/* Fonte: couple.css lines 23-31 */
 .chero {
   text-align: center;
   padding: clamp(54px, 9vw, 110px) 0 clamp(30px, 5vw, 56px);
@@ -87,6 +85,7 @@
 }
 
 /* ---- live counter ---- */
+/* Fonte: couple.css lines 33-49 */
 .ccount {
   margin: clamp(40px, 6vw, 60px) auto 0;
   max-width: 760px;
@@ -162,6 +161,7 @@
 }
 
 /* ---- polaroid scene ---- */
+/* Fonte: couple.css lines 52-63 */
 .cscene {
   position: relative;
   margin: clamp(50px, 8vw, 96px) 0;
@@ -177,6 +177,7 @@
 .cpCenter { transform: rotate(2deg); z-index: 4; }
 
 .cscene :global(.polaroid):hover { transform: rotate(0) scale(1.035) !important; box-shadow: var(--shadow-lift); z-index: 9 !important; }
+
 .cscene :global(.polaroid) img { object-fit: cover; display: block; }
 
 @media (max-width: 880px) {
@@ -186,6 +187,7 @@
 }
 
 /* ---- story ---- */
+/* Fonte: couple.css lines 66-80 */
 .cstory { padding-block: clamp(20px, 4vw, 40px); }
 
 .cstoryHead { text-align: center; margin-bottom: clamp(40px, 6vw, 70px); }
@@ -199,8 +201,6 @@
 }
 .cstoryRow:last-child { margin-bottom: 0; }
 .flip .cstoryMedia { order: 2; }
-
-.cstoryNoPhoto { grid-template-columns: 1fr; max-width: 640px; margin-inline: auto; }
 
 .cstoryMedia img {
   width: 100%;
@@ -230,6 +230,7 @@
 }
 
 /* ---- closing ---- */
+/* Fonte: couple.css lines 83-86 */
 .cclose { text-align: center; padding: clamp(60px, 9vw, 120px) 0; }
 
 .ccloseLine {
@@ -251,6 +252,7 @@
 }
 
 /* ---- footer / made with ---- */
+/* Fonte: couple.css lines 89-94 */
 .cmade {
   background: var(--ink);
   color: var(--bg);
@@ -279,19 +281,3 @@
   color: rgba(255,255,255,.5);
   margin-top: 18px;
 }
-
-/* ---- not found ---- */
-.notFound {
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: 16px;
-  padding: var(--gut);
-  text-align: center;
-  background: var(--bg);
-}
-.nfIcon { font-size: 48px; color: var(--terra); }
-.nfTitle { font-family: var(--serif); font-size: 32px; color: var(--ink); margin: 0; }
-.nfSub { font-family: var(--body); font-size: 17px; color: var(--ink-2); margin: 0 0 16px; }

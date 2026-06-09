@@ -1,83 +1,108 @@
-import { useEffect, useState, useRef } from 'react';
-import { useSearchParams, Link } from 'react-router-dom';
+import { useCallback, useEffect, useRef, useState } from 'react';
+import { Link, useNavigate, useSearchParams } from 'react-router-dom';
 import { api } from '../services/api';
 import { trackEvent } from '../utils/analytics';
-import type { CheckoutStatusResponse } from '../shared/index';
+import type { CheckoutConfirmationResponse } from '../shared/index';
 import styles from './PaymentApproved.module.css';
 
-const POLL_INTERVAL = 3000;
-const MAX_POLLS = 20;
+const POLL_INTERVAL_MS = 2000;
+const MAX_WAIT_MS = 45000;
 
 export default function PaymentApprovedPage() {
   const [params] = useSearchParams();
-  const sessionId = params.get('session_id');
+  const navigate = useNavigate();
+  const sessionId = params.get('session_id') || sessionStorage.getItem('checkout_session_id') || '';
+  const initialPageId = params.get('page_id') || sessionStorage.getItem('checkout_page_id') || '';
 
-  const [status, setStatus] = useState<CheckoutStatusResponse | null>(null);
-  const [polls, setPolls] = useState(0);
-  const [copied, setCopied] = useState(false);
-  const pollRef = useRef<ReturnType<typeof setInterval> | null>(null);
+  const [pageId, setPageId] = useState(initialPageId);
+  const [status, setStatus] = useState<CheckoutConfirmationResponse | null>(null);
+  const [error, setError] = useState('');
+  const [checking, setChecking] = useState(true);
+  const [timedOut, setTimedOut] = useState(false);
+  const startedAtRef = useRef(Date.now());
+  const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const stoppedRef = useRef(false);
 
-  // We need the pageId — fetch it from session storage or URL if available
-  // In production the backend webhook sets the page to published.
-  // We poll /checkout/status/:pageId. Since we only have session_id here,
-  // we look for a stored pageId that was set before redirect.
-  const pageId = sessionStorage.getItem('checkout_page_id') || params.get('page_id') || '';
+  const clearTimer = () => {
+    if (timerRef.current) clearTimeout(timerRef.current);
+    timerRef.current = null;
+  };
+
+  const checkPayment = useCallback(async (manual = false) => {
+    clearTimer();
+    if (!sessionId && !pageId) {
+      setChecking(false);
+      setError('Não encontramos os dados do pagamento. Volte aos planos e tente novamente.');
+      return;
+    }
+
+    setChecking(true);
+    if (manual) {
+      setError('');
+      setTimedOut(false);
+      startedAtRef.current = Date.now();
+    }
+
+    try {
+      const result = await api.checkout.confirmSession(sessionId || undefined, pageId || undefined);
+      if (stoppedRef.current) return;
+
+      setStatus(result);
+      if (result.pageId && result.pageId !== pageId) {
+        setPageId(result.pageId);
+        sessionStorage.setItem('checkout_page_id', result.pageId);
+      }
+
+      if (result.status === 'paid') {
+        trackEvent('payment_confirmed');
+        sessionStorage.removeItem('checkout_session_id');
+        const target = result.editorUrl || `/editor/${result.pageId || pageId}`;
+        navigate(target, { replace: true });
+        return;
+      }
+
+      if (result.status === 'failed' || result.status === 'expired' || result.status === 'refunded') {
+        trackEvent('payment_failed');
+        setChecking(false);
+        return;
+      }
+
+      if (result.status === 'invalid_session' || result.status === 'missing_data' || result.status === 'not_found' || result.status === 'mismatch') {
+        setChecking(false);
+        setError(result.message || 'Não foi possível confirmar este pagamento.');
+        return;
+      }
+
+      trackEvent('payment_pending');
+      if (Date.now() - startedAtRef.current >= MAX_WAIT_MS) {
+        setTimedOut(true);
+        setChecking(false);
+        return;
+      }
+
+      timerRef.current = setTimeout(() => checkPayment(false), POLL_INTERVAL_MS);
+    } catch (err: unknown) {
+      if (stoppedRef.current) return;
+      setChecking(false);
+      setError(err instanceof Error ? err.message : 'Não foi possível falar com o servidor.');
+    }
+  }, [sessionId, pageId, navigate]);
 
   useEffect(() => {
     trackEvent('payment_success_page_view');
+    stoppedRef.current = false;
+    checkPayment(false);
+    return () => {
+      stoppedRef.current = true;
+      clearTimer();
+    };
+  }, [checkPayment]);
 
-    if (!pageId) return;
-
-    async function poll() {
-      try {
-        const s = await api.checkout.getStatus(pageId);
-        setStatus(s);
-        setPolls((p) => p + 1);
-
-        if (s.status === 'paid') {
-          trackEvent('payment_confirmed');
-          trackEvent('publish_success');
-          clearInterval(pollRef.current!);
-        } else if (s.status === 'failed' || s.status === 'expired') {
-          trackEvent('payment_failed');
-          clearInterval(pollRef.current!);
-        } else {
-          trackEvent('payment_pending');
-        }
-      } catch {}
-    }
-
-    poll();
-    pollRef.current = setInterval(() => {
-      setPolls((p) => {
-        if (p >= MAX_POLLS) { clearInterval(pollRef.current!); return p; }
-        return p;
-      });
-      poll();
-    }, POLL_INTERVAL);
-
-    return () => clearInterval(pollRef.current!);
-  }, [pageId]);
-
-  async function copyLink() {
-    if (!status?.publicUrl) return;
-    await navigator.clipboard.writeText(status.publicUrl).catch(() => {});
-    setCopied(true);
-    setTimeout(() => setCopied(false), 2000);
-    trackEvent('copy_public_link');
-  }
-
-  function shareWhatsapp() {
-    if (!status?.publicUrl) return;
-    const text = encodeURIComponent(`A nossa história 🤍 ${status.publicUrl}`);
-    window.open(`https://wa.me/?text=${text}`, '_blank');
-    trackEvent('share_whatsapp_click');
-  }
-
-  const isPaid = status?.status === 'paid';
-  const isFailed = status?.status === 'failed' || status?.status === 'expired';
-  const isPending = !isPaid && !isFailed;
-  const timedOut = polls >= MAX_POLLS && isPending;
+  const effectivePageId = status?.pageId || pageId;
+  const isFailed = status?.status === 'failed' || status?.status === 'expired' || status?.status === 'refunded';
+  const pendingMessage = timedOut
+    ? 'Seu pagamento pode já ter sido recebido, mas a confirmação ainda não chegou ao sistema.'
+    : 'Assim que o pagamento for confirmado, você será levado para o editor da sua página.';
 
   return (
     <div className={styles.page}>
@@ -86,70 +111,46 @@ export default function PaymentApprovedPage() {
       </nav>
 
       <div className={styles.card}>
-        {isFailed ? (
+        {error ? (
+          <>
+            <div className={styles.iconFail}>!</div>
+            <h1 className={styles.title}>Pagamento não confirmado</h1>
+            <p className={styles.sub}>{error}</p>
+            <div className={styles.actions}>
+              <button type="button" className="btn btn--primary btn--lg" onClick={() => checkPayment(true)} disabled={checking}>
+                {checking ? 'Verificando...' : 'Verificar novamente'}
+              </button>
+              <Link to="/minhas-paginas" className="btn btn--ghost-dark">Ir para minhas páginas</Link>
+              <Link to={effectivePageId ? `/planos/${effectivePageId}` : '/criar'} className="btn-text">Voltar aos planos</Link>
+            </div>
+          </>
+        ) : isFailed ? (
           <>
             <div className={styles.iconFail}>✕</div>
             <h1 className={styles.title}>Pagamento não confirmado</h1>
-            <p className={styles.sub}>Não foi possível confirmar o seu pagamento. Por favor, tente novamente ou entre em contato.</p>
-            <Link to={`/planos/${pageId}`} className="btn btn--primary btn--lg" style={{ marginTop: 24, justifyContent: 'center' }}>
-              Tentar novamente
-            </Link>
-          </>
-        ) : isPaid && status?.publicUrl ? (
-          <>
-            <div className={styles.iconSuccess}>♥</div>
-            <h1 className={styles.title}>Sua página está no ar!</h1>
-            <p className={styles.sub}>
-              A memória de vocês agora tem um endereço permanente na internet.
-            </p>
-
-            <div className={styles.linkBox}>
-              <span className={styles.linkText}>{status.publicUrl}</span>
-            </div>
-
+            <p className={styles.sub}>O pagamento falhou ou expirou. O editor continua bloqueado até a confirmação.</p>
             <div className={styles.actions}>
-              <button className="btn btn--primary btn--lg" onClick={copyLink} style={{ flex: 1, justifyContent: 'center' }}>
-                {copied ? '✓ Copiado!' : 'Copiar link'}
-              </button>
-              <a
-                href={status.publicUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="btn btn--ghost-dark btn--lg"
-                style={{ flex: 1, justifyContent: 'center' }}
-                onClick={() => trackEvent('open_public_link')}
-              >
-                Abrir página →
-              </a>
-            </div>
-
-            <button className={styles.whatsapp} onClick={shareWhatsapp}>
-              <span>📱</span> Compartilhar no WhatsApp
-            </button>
-
-            <div className={styles.confetti} aria-hidden>
-              {['♥','✦','♥','✦','♥'].map((s, i) => (
-                <span key={i} className={styles.confettiPiece} style={{ animationDelay: `${i * 0.2}s` }}>{s}</span>
-              ))}
+              <Link to={effectivePageId ? `/planos/${effectivePageId}` : '/criar'} className="btn btn--primary btn--lg">Tentar novamente</Link>
+              <Link to="/minhas-paginas" className="btn btn--ghost-dark">Ir para minhas páginas</Link>
             </div>
           </>
         ) : (
           <>
-            <div className={styles.spinner}>
-              <span className="spinner spinner--dark" style={{ width: 36, height: 36 }} />
-            </div>
-            <h1 className={styles.title}>
-              {timedOut ? 'Quase lá...' : 'Confirmando pagamento...'}
-            </h1>
-            <p className={styles.sub}>
-              {timedOut
-                ? 'O pagamento está sendo processado. Você receberá um e-mail quando a página estiver no ar.'
-                : 'Aguarde enquanto confirmamos o seu pagamento. Isso leva apenas alguns segundos.'}
-            </p>
+            {checking && !timedOut && (
+              <div className={styles.spinner}>
+                <span className="spinner spinner--dark" style={{ width: 36, height: 36 }} />
+              </div>
+            )}
+            <h1 className={styles.title}>{timedOut ? 'Pagamento em processamento' : 'Confirmando pagamento...'}</h1>
+            <p className={styles.sub}>{pendingMessage}</p>
             {timedOut && (
-              <p className={styles.hint}>
-                Se você não receber o e-mail em alguns minutos, entre em contato conosco.
-              </p>
+              <div className={styles.actions}>
+                <button type="button" className="btn btn--primary btn--lg" onClick={() => checkPayment(true)} disabled={checking}>
+                  {checking ? 'Verificando...' : 'Verificar novamente'}
+                </button>
+                <Link to="/minhas-paginas" className="btn btn--ghost-dark">Ir para minhas páginas</Link>
+                <Link to={effectivePageId ? `/planos/${effectivePageId}` : '/criar'} className="btn-text">Voltar aos planos</Link>
+              </div>
             )}
           </>
         )}

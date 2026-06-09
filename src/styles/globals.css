@@ -64,10 +64,24 @@
   --terra:#1F8079; --terra-dark:#155F59; --terra-light:#99CFC9; --terra-pale:#DCF0ED; --terra-rgb:31,128,121;
   --brown:#4E817A; --line:#D2E4E1; --line-dark:#1A312E;
 }
+/* não encontrado no design — estimado */
+[data-theme="marinho"] {
+  --bg:#F4F5F8; --bg-2:#E3E8F0; --bg-card:#FAFBFD;
+  --ink:#0D1621; --ink-2:#2C3E5A; --ink-3:#6B7A92;
+  --terra:#3A5687; --terra-dark:#2A3E65; --terra-light:#8FA8CE; --terra-pale:#E4EBF6; --terra-rgb:58,86,135;
+  --brown:#5E6B80; --line:#D8DEEB; --line-dark:#1C2839;
+}
+/* não encontrado no design — estimado */
+[data-theme="sage"] {
+  --bg:#F4F6F0; --bg-2:#E6EDDC; --bg-card:#FAFCF7;
+  --ink:#131A0E; --ink-2:#3A4E2A; --ink-3:#7A8C65;
+  --terra:#5F7D3E; --terra-dark:#476030; --terra-light:#A8BF85; --terra-pale:#E6F0D8; --terra-rgb:95,125,62;
+  --brown:#74804F; --line:#DCEACB; --line-dark:#233018;
+}
 
 * { box-sizing: border-box; }
 
-html { scroll-behavior: smooth; -webkit-text-size-adjust: 100%; }
+html { scroll-behavior: smooth; -webkit-text-size-adjust: 100%; overflow-x: hidden; }
 
 body {
   margin: 0;

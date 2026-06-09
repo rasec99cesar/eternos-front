@@ -1,0 +1,259 @@
+/* ============================================================
+   SEMPRE — vinyl player
+   Fonte: vinyl.css (valores explícitos fornecidos no spec do design)
+   Estimados marcados com "estimado — não encontrado no design"
+   ============================================================ */
+
+/* Fonte: vinyl.css — duração 3.4s linear infinite */
+@keyframes vspin {
+  to { transform: rotate(360deg); }
+}
+
+/* Fonte: vinyl.css — duração .95s, delays 0, .28s, .52s */
+@keyframes veq {
+  0%, 100% { transform: scaleY(.28); }
+  50%       { transform: scaleY(1); }
+}
+
+/* Fonte: vinyl.css — duração 1.7s */
+@keyframes vring {
+  0%   { transform: scale(.96); opacity: .7; }
+  100% { transform: scale(1.35); opacity: 0; }
+}
+
+/* ---- container — Fonte: vinyl.css ---- */
+.vinylPlayer {
+  position: fixed;
+  left: clamp(14px, 3vw, 26px);
+  bottom: clamp(14px, 3vw, 26px);
+  z-index: 60;
+  display: inline-flex;
+  align-items: center;
+  gap: 13px;
+  padding: 8px 18px 8px 8px;
+  background: color-mix(in srgb, var(--bg-card) 92%, transparent);
+  backdrop-filter: saturate(1.15) blur(10px);
+  -webkit-backdrop-filter: saturate(1.15) blur(10px);
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  box-shadow: var(--shadow);
+  font-family: var(--ui);
+  cursor: pointer;
+  user-select: none;
+  transition: box-shadow .25s, transform .25s;
+}
+
+/* estimado — não encontrado no design */
+.vinylPlayer:hover {
+  box-shadow: var(--shadow-lift);
+  transform: translateY(-1px);
+}
+
+/* ---- vinyl disc ---- */
+/* estimado — não encontrado no design */
+.vinylDisc {
+  position: relative;
+  width: 52px;
+  height: 52px;
+  flex-shrink: 0;
+}
+
+.vinylDiscSpin {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+}
+/* spin only activates with .isPlaying — Fonte: vinyl.css */
+.isPlaying .vinylDiscSpin {
+  animation: vspin 3.4s linear infinite;
+}
+
+/* estimado — não encontrado no design */
+.vinylDiscRecord {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  background: radial-gradient(circle, #2c2c2c 0%, #1a1a1a 40%, #111 100%);
+  box-shadow: inset 0 0 0 1px rgba(255,255,255,.07);
+}
+
+/* estimado — não encontrado no design */
+.vinylDiscRecord::after {
+  content: '';
+  position: absolute;
+  inset: 4px;
+  border-radius: 50%;
+  background: repeating-radial-gradient(circle, transparent, transparent 2px, rgba(255,255,255,.03) 2.5px, transparent 3px);
+}
+
+/* centro vermelho — contraste para ícone branco de play/pause */
+.vinylDiscLabel {
+  position: absolute;
+  inset: 35%;
+  border-radius: 50%;
+  background: var(--terra);
+  border: 1px solid var(--terra-dark);
+}
+
+.vinylDiscHole {
+  position: absolute;
+  inset: 46%;
+  border-radius: 50%;
+  background: rgba(0,0,0,.55);
+}
+
+/* estimado — não encontrado no design */
+.vinylDiscSheen {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  background: linear-gradient(135deg, rgba(255,255,255,.14) 0%, transparent 60%);
+  pointer-events: none;
+}
+
+/* ---- play/pause button overlay ---- */
+/* estimado — não encontrado no design */
+.vinylDiscBtn {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  color: #fff;
+}
+
+.vpIco {
+  width: 18px;
+  height: 18px;
+  position: absolute;
+  transition: opacity .2s;
+}
+
+/* show play icon when paused, pause icon when playing */
+.vpIcoPause { opacity: 0; }
+.vpIcoPlay  { opacity: .85; }
+.isPlaying .vpIcoPause { opacity: .85; }
+.isPlaying .vpIcoPlay  { opacity: 0; }
+
+/* ring pulse when playing — Fonte: vinyl.css (vring keyframe) */
+/* estimado — não encontrado no design (selector/position) */
+.isPlaying .vinylDisc::after {
+  content: '';
+  position: absolute;
+  inset: -4px;
+  border-radius: 50%;
+  border: 1.5px solid rgba(var(--terra-rgb), .5);
+  animation: vring 1.7s ease-out infinite;
+}
+
+/* ---- meta info ---- */
+/* estimado — não encontrado no design */
+.vinylMeta {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  max-width: 140px;
+  overflow: hidden;
+}
+
+.vinylMetaK {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-family: var(--ui);
+  font-size: 11px;
+  letter-spacing: .06em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+}
+
+/* estimado — não encontrado no design */
+.vinylState { }
+
+/* estimado — não encontrado no design */
+.vinylMetaSong {
+  font-family: var(--ui);
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--ink);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* estimado — não encontrado no design */
+.vinylMetaArtist {
+  font-family: var(--ui);
+  font-size: 11.5px;
+  color: var(--ink-3);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* ---- equalizer bars — Fonte: vinyl.css (veq keyframe + delays) ---- */
+/* estimado — não encontrado no design (selector/dimensions) */
+.vinylEq {
+  display: inline-flex;
+  align-items: flex-end;
+  gap: 2px;
+  height: 12px;
+}
+.vinylEq i {
+  display: block;
+  width: 2.5px;
+  height: 100%;
+  background: var(--terra);
+  border-radius: 1px;
+  transform: scaleY(.28);
+  transform-origin: bottom;
+}
+/* delays: 0, .28s, .52s — Fonte: vinyl.css */
+.isPlaying .vinylEq i:nth-child(1) { animation: veq .95s ease-in-out infinite; animation-delay: 0s; }
+.isPlaying .vinylEq i:nth-child(2) { animation: veq .95s ease-in-out infinite; animation-delay: .28s; }
+.isPlaying .vinylEq i:nth-child(3) { animation: veq .95s ease-in-out infinite; animation-delay: .52s; }
+
+/* ---- hint text (shown while waiting for first touch) ---- */
+/* estimado — não encontrado no design */
+.vinylHint {
+  display: none;
+  font-family: var(--ui);
+  font-size: 12px;
+  color: var(--ink-3);
+  position: absolute;
+  bottom: calc(100% + 8px);
+  left: 50%;
+  transform: translateX(-50%);
+  background: var(--bg-card);
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  padding: 6px 12px;
+  white-space: nowrap;
+  box-shadow: var(--shadow-sm);
+  pointer-events: none;
+}
+.needsTouch .vinylHint { display: block; }
+
+/* ---- hidden embed (audio source) ---- */
+/* estimado — não encontrado no design */
+.vinylEmbed {
+  position: fixed;
+  bottom: -200px;
+  left: -200px;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+/* ---- mobile: hide meta — Fonte: vinyl.css linha 96 ---- */
+@media (max-width: 520px) {
+  .vinylMeta { display: none; }
+  .vinylPlayer { padding: 7px; gap: 0; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .isPlaying .vinylDiscSpin { animation: none; }
+  .isPlaying .vinylEq i { animation: none; }
+  .isPlaying .vinylDisc::after { animation: none; }
+}

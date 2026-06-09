@@ -92,8 +92,12 @@
   height: 2px;
   background: var(--ink);
   margin: 5px 0;
-  transition: .3s;
+  transition: transform .3s, opacity .3s;
 }
+
+.burgerOpen span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
+.burgerOpen span:nth-child(2) { opacity: 0; }
+.burgerOpen span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
 
 @media (max-width: 900px) {
   .links { display: none; }

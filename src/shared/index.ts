@@ -45,10 +45,15 @@ export const CreatePageSchema = z.object({
   storyJson: z.string().optional(),
   templateId: z.string().optional(),
   themeConfigJson: z.string().optional(),
-  privacy: PagePrivacy.default('private'),
+  privacy: PagePrivacy.default('public'),
 });
 
-export const UpdatePageSchema = CreatePageSchema.partial();
+export const UpdatePageSchema = CreatePageSchema.partial().extend({
+  spotifyTrackId:  z.string().max(22).optional(),
+  spotifyTrackUrl: z.string().url().optional().or(z.literal('')),
+  spotifySong:     z.string().max(40).optional(),
+  spotifyArtist:   z.string().max(40).optional(),
+});
 
 export type CreatePageInput = z.infer<typeof CreatePageSchema>;
 export type UpdatePageInput = z.infer<typeof UpdatePageSchema>;
@@ -60,6 +65,11 @@ export interface PageAsset {
   url: string;
   alt: string | null;
   position: number;
+  mimeType?: string | null;
+  filename?: string | null;
+  size?: number | null;
+  width?: number | null;
+  height?: number | null;
   createdAt: string;
 }
 
@@ -75,6 +85,10 @@ export interface CouplePage {
   storyJson: string | null;
   templateId: string | null;
   themeConfigJson: string | null;
+  spotifyTrackId: string | null;
+  spotifyTrackUrl: string | null;
+  spotifySong: string | null;
+  spotifyArtist: string | null;
   privacy: PagePrivacy;
   status: PageStatus;
   publicUrl: string | null;
@@ -121,7 +135,6 @@ export interface Order {
 export const CreateCheckoutSessionSchema = z.object({
   pageId: z.string(),
   plan: z.enum(['sempre', 'eterno']),
-  includeOrderBump: z.boolean().default(false),
 });
 
 export type CreateCheckoutSessionInput = z.infer<typeof CreateCheckoutSessionSchema>;
@@ -135,6 +148,15 @@ export interface CheckoutStatusResponse {
   status: OrderStatus;
   publicUrl: string | null;
   publishedAt: string | null;
+}
+
+export interface CheckoutConfirmationResponse {
+  status: OrderStatus | 'pending' | 'missing_data' | 'invalid_session' | 'not_found' | 'mismatch';
+  pageId: string | null;
+  editorUrl?: string;
+  publicUrl?: string | null;
+  publishedAt?: string | null;
+  message?: string;
 }
 
 // ─── API responses ────────────────────────────────────────────────────────────
@@ -196,8 +218,6 @@ export type UmamiEventName =
   | 'share_whatsapp_click'
   // Payment
   | 'plan_select'
-  | 'order_bump_select'
-  | 'order_bump_remove'
   | 'checkout_start'
   | 'checkout_error'
   | 'payment_success_page_view'

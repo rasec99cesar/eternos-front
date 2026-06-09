@@ -3,6 +3,7 @@ import type {
   CouplePage,
   Template,
   CheckoutStatusResponse,
+  CheckoutConfirmationResponse,
   CheckoutSessionResponse,
   CreatePageInput,
   UpdatePageInput,
@@ -71,6 +72,9 @@ export const api = {
 
     validatePublish: (id: string) =>
       request<{ valid: boolean }>(`/pages/${id}/validate-publish`, { method: 'POST' }),
+
+    publish: (id: string) =>
+      request<CouplePage>(`/pages/${id}/publish`, { method: 'POST' }),
   },
 
   // ─── Templates ──────────────────────────────────────────────────────────────
@@ -101,8 +105,15 @@ export const api = {
         body: JSON.stringify(data),
       }),
 
-    getStatus: (pageId: string) =>
-      request<CheckoutStatusResponse>(`/checkout/status/${pageId}`),
+    getStatus: (pageId: string, sessionId?: string) =>
+      request<CheckoutStatusResponse>(`/checkout/status/${pageId}${sessionId ? `?session_id=${encodeURIComponent(sessionId)}` : ''}`),
+
+    confirmSession: (sessionId?: string, pageId?: string) => {
+      const params = new URLSearchParams();
+      if (sessionId) params.set('session_id', sessionId);
+      if (pageId) params.set('page_id', pageId);
+      return request<CheckoutConfirmationResponse>(`/checkout/session-status?${params.toString()}`);
+    },
   },
 
   // ─── Uploads ────────────────────────────────────────────────────────────────
@@ -123,5 +134,8 @@ export const api = {
       if (!res.ok) throw new ApiError(res.status, json.error ?? 'Erro ao enviar imagem');
       return json.data;
     },
+
+    delete: (assetId: string) =>
+      request<{ message: string }>(`/assets/item/${assetId}`, { method: 'DELETE' }),
   },
 };

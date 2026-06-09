@@ -97,18 +97,28 @@ export default function MyPagesPage() {
                 )}
 
                 <div className={styles.cardActions}>
-                  <Link to={`/editor/${p.id}`} className="btn btn--ghost-dark" style={{ fontSize: 14, minHeight: 38, padding: '8px 16px' }}>
-                    Editar
-                  </Link>
+                  {p.status === 'paid' || p.status === 'published' ? (
+                    <Link to={`/editor/${p.id}`} className="btn btn--ghost-dark" style={{ fontSize: 14, minHeight: 38, padding: '8px 16px' }}>
+                      Editar
+                    </Link>
+                  ) : (
+                    <Link to={`/planos/${p.id}`} className="btn btn--ghost-dark" style={{ fontSize: 14, minHeight: 38, padding: '8px 16px' }}>
+                      Pagar
+                    </Link>
+                  )}
                   {p.status === 'published' && p.publicUrl ? (
                     <a href={p.publicUrl} target="_blank" rel="noopener noreferrer" className="btn btn--primary" style={{ fontSize: 14, minHeight: 38, padding: '8px 16px' }}>
                       Ver →
                     </a>
-                  ) : p.status === 'draft' || p.status === 'pending_payment' ? (
-                    <Link to={`/planos/${p.id}`} className="btn btn--primary" style={{ fontSize: 14, minHeight: 38, padding: '8px 16px' }}>
+                  ) : p.status === 'paid' ? (
+                    <Link to={`/editor/${p.id}`} className="btn btn--primary" style={{ fontSize: 14, minHeight: 38, padding: '8px 16px' }}>
                       Publicar
                     </Link>
-                  ) : null}
+                  ) : (
+                    <Link to={`/planos/${p.id}`} className="btn btn--primary" style={{ fontSize: 14, minHeight: 38, padding: '8px 16px' }}>
+                      Continuar →
+                    </Link>
+                  )}
                 </div>
               </div>
             ))}

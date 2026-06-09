@@ -1,15 +1,16 @@
+/* Fonte: sections.css — footer */
 .foot {
   background: var(--ink);
-  color: rgba(255,255,255,.55);
-  padding-block: clamp(56px, 8vw, 80px) 32px;
+  color: rgba(255,255,255,.6);
+  padding-block: 60px;
 }
 
 .top {
-  display: grid;
-  grid-template-columns: 1fr 2fr;
-  gap: clamp(40px, 6vw, 80px);
-  padding-bottom: clamp(40px, 5vw, 60px);
-  border-bottom: 1px solid rgba(255,255,255,.08);
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 30px;
+  flex-wrap: wrap;
 }
 
 .brand {
@@ -26,52 +27,58 @@
 .dot { color: var(--terra-light); }
 
 .tagline {
-  font-family: var(--ui);
-  font-size: 14px;
-  color: rgba(255,255,255,.45);
-  margin: 10px 0 0;
+  font-family: var(--serif);
+  font-style: italic;
+  font-size: 19px;
+  color: rgba(255,255,255,.72);
+  margin-top: 12px;
+  max-width: 30ch;
 }
 
 .links {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 32px;
+  display: flex;
+  gap: 50px;
+  flex-wrap: wrap;
 }
 
-.col { display: flex; flex-direction: column; gap: 10px; }
+.col { display: flex; flex-direction: column; }
 
 .col h5 {
   font-family: var(--ui);
   font-size: 12px;
-  font-weight: 600;
-  letter-spacing: .16em;
+  letter-spacing: .14em;
   text-transform: uppercase;
-  color: rgba(255,255,255,.3);
-  margin: 0 0 4px;
+  color: rgba(255,255,255,.42);
+  margin: 0 0 16px;
+  font-weight: 600;
 }
 
 .col a {
+  display: block;
   font-family: var(--ui);
-  font-size: 14px;
-  color: rgba(255,255,255,.5);
+  font-size: 15px;
+  color: rgba(255,255,255,.72);
   text-decoration: none;
+  margin-bottom: 11px;
   transition: color .2s;
 }
-.col a:hover { color: rgba(255,255,255,.9); }
+.col a:hover { color: rgba(255,255,255,.95); }
 
 .bot {
+  border-top: 1px solid var(--line-dark);
+  margin-top: 46px;
+  padding-top: 26px;
   display: flex;
   justify-content: space-between;
   gap: 16px;
   flex-wrap: wrap;
-  padding-top: 28px;
   font-family: var(--ui);
-  font-size: 12px;
-  color: rgba(255,255,255,.3);
+  font-size: 13px;
+  color: rgba(255,255,255,.42);
 }
 
 @media (max-width: 760px) {
-  .top { grid-template-columns: 1fr; }
-  .links { grid-template-columns: repeat(2, 1fr); }
+  .top { flex-direction: column; }
+  .links { gap: 32px; }
   .bot { flex-direction: column; gap: 6px; }
 }
