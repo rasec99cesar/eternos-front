@@ -7,6 +7,10 @@ type MetaEventParams = {
   content_ids?: string[];
   content_name?: string;
   content_type?: string;
+  contents?: Array<{
+    id: string;
+    quantity: number;
+  }>;
   currency?: 'BRL';
   num_items?: number;
   page_id?: string;
@@ -67,9 +71,15 @@ export function getPlanMeta(plan: PlanKey) {
 function planEventParams(plan: PlanKey, pageId?: string): MetaEventParams {
   const meta = getPlanMeta(plan);
   return {
-    content_ids: [plan],
+    content_ids: ['vendas'],
     content_name: meta.name,
     content_type: 'product',
+    contents: [
+      {
+        id: 'vendas',
+        quantity: 1,
+      },
+    ],
     currency: 'BRL',
     num_items: 1,
     value: meta.value,
