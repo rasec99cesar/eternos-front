@@ -4,6 +4,7 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { AuthProvider } from './contexts/AuthContext';
 import { ProtectedRoute } from './components/ProtectedRoute';
 import { applySeo, getRouteSeo } from './utils/seo';
+import { trackMetaPageView } from './utils/analytics';
 
 function ScrollToTop() {
   const { pathname } = useLocation();
@@ -16,6 +17,19 @@ function SeoManager() {
   useEffect(() => {
     applySeo(getRouteSeo(pathname));
   }, [pathname]);
+  return null;
+}
+
+function MetaPixelPageView() {
+  const { pathname, search } = useLocation();
+  useEffect(() => {
+    if (!window.fbq) return;
+    if (!sessionStorage.getItem('meta_pixel_initial_pageview_sent')) {
+      sessionStorage.setItem('meta_pixel_initial_pageview_sent', '1');
+      return;
+    }
+    trackMetaPageView();
+  }, [pathname, search]);
   return null;
 }
 
@@ -46,6 +60,7 @@ export default function App() {
         <AuthProvider>
           <ScrollToTop />
           <SeoManager />
+          <MetaPixelPageView />
           <Routes>
             {/* Public */}
             <Route path="/" element={<LandingPage />} />

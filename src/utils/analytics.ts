@@ -5,6 +5,7 @@ declare global {
     umami?: {
       track: (event: string, data?: Record<string, unknown>) => void;
     };
+    fbq?: (command: 'track', event: 'PageView') => void;
   }
 }
 
@@ -31,4 +32,12 @@ export function initUmami() {
   script.src = src;
   script.setAttribute('data-website-id', id);
   document.head.appendChild(script);
+}
+
+export function trackMetaPageView() {
+  try {
+    window.fbq?.('track', 'PageView');
+  } catch {
+    // Meta Pixel should never break routing
+  }
 }
