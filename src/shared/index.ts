@@ -26,7 +26,7 @@ export interface User {
 // ─── CouplePage ──────────────────────────────────────────────────────────────
 
 export const PagePrivacy = z.enum(['public', 'private']);
-export const PageStatus = z.enum(['draft', 'pending_payment', 'paid', 'published', 'archived']);
+export const PageStatus = z.enum(['draft', 'pending_payment', 'paid', 'published', 'archived', 'hidden']);
 
 export type PagePrivacy = z.infer<typeof PagePrivacy>;
 export type PageStatus = z.infer<typeof PageStatus>;
@@ -96,6 +96,7 @@ export interface CouplePage {
   createdAt: string;
   updatedAt: string;
   assets?: PageAsset[];
+  plan?: string | null;
 }
 
 // ─── Template ─────────────────────────────────────────────────────────────────

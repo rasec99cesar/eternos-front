@@ -44,7 +44,7 @@ interface ExampleData {
 const EXAMPLES: Record<string, ExampleData> = {
   casamento: {
     theme: 'bordo',
-    docTitle: 'Marina & Thiago — Sempre',
+    docTitle: 'Marina & Thiago — Somos Eternos',
     eyebrow: 'A nossa história',
     name1: 'Marina',
     name2: 'Thiago',
@@ -82,7 +82,7 @@ const EXAMPLES: Record<string, ExampleData> = {
   },
   viagem: {
     theme: 'terracota',
-    docTitle: 'Bea & Léo — Sempre',
+    docTitle: 'Bea & Léo — Somos Eternos',
     eyebrow: 'A nossa viagem',
     name1: 'Bea',
     name2: 'Léo',
@@ -120,7 +120,7 @@ const EXAMPLES: Record<string, ExampleData> = {
   },
   pedido: {
     theme: 'lavanda',
-    docTitle: 'Júlia & Pedro — Sempre',
+    docTitle: 'Júlia & Pedro — Somos Eternos',
     eyebrow: 'O nosso começo',
     name1: 'Júlia',
     name2: 'Pedro',
@@ -218,7 +218,7 @@ export default function ExamplePage() {
       {/* bar */}
       <header className={styles.cbar}>
         <div className={`${styles.cwrap} ${styles.cbarIn}`}>
-          <Link to="/" className={styles.cbarBrand}>Sempre<span className={styles.pt}>.</span></Link>
+          <Link to="/" className={styles.cbarBrand}>Somos Eternos</Link>
           <Link to="/entrar" className={styles.cbarBack}>← Criar a minha página</Link>
         </div>
       </header>
@@ -303,7 +303,7 @@ export default function ExamplePage() {
       {/* footer / made with */}
       <footer className={styles.cmade}>
         <div className={styles.cwrap}>
-          <span className={styles.cmadeK}>Esta página foi feita no Sempre</span>
+          <span className={styles.cmadeK}>Esta página foi feita no Somos Eternos</span>
           <h2>Toda história de amor merece uma casa própria na internet.</h2>
           <Link to="/entrar" className="btn btn--lg" style={{ background: 'var(--terra)', color: '#fff' }}>
             Criar a nossa página assim →

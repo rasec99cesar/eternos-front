@@ -111,52 +111,160 @@ function slugify(value: string): string {
     .replace(/^-+|-+$/g, '');
 }
 
-const SINCE_PRESETS = [
-  'A nossa história, contada em tempo real.',
-  'Cada segundo desde que viramos nós dois.',
-  'Do primeiro encontro até agora — e sem parar.',
-  'Um amor que o tempo só faz crescer.',
-  'Tudo começou num dia comum. E nunca mais foi comum.',
-];
-
-const STORY_TITLE_PRESETS = [
-  'Desde o primeiro olhar',
-  'Quando tudo começou',
-  'A história de nós dois',
-  'O dia que mudou tudo',
-  'Onde começou',
-];
-
-const STORY_TEXT_PRESETS = [
-  'Foi num instante, mas foi para sempre.',
-  'A gente não escolheu — simplesmente aconteceu.',
-  'Não era o momento certo. Mas foi o momento real.',
-  'Antes de saber seu nome, já sabia que era você.',
-  'Tinha tudo para não dar certo. E deu.',
-];
-
-const CAP_CENTER_PRESETS = [
-  'A nossa favorita',
-  'Quando vi você pela primeira vez',
-  'Amor à primeira vista — e a certeza veio depois',
-  'O dia que eu não esqueci mais',
-  'A minha pessoa preferida no mundo',
-  'Hoje, e sempre',
-];
-
-const CAP_PRESETS = [
-  ['O nosso começo', 'Quando tudo era novidade', 'Onde tudo começou', 'O primeiro de muitos'],
-  ['A nossa viagem inesquecível', 'O mundo era só nosso', 'Longe de casa, perto de você', 'O melhor dia de todos'],
-  ['Hoje, e sempre', 'O nosso agora', 'E a melhor parte ainda vem', 'O nosso para sempre'],
-];
-
-const CLOSE_LINE_PRESETS = [
-  'Uma vida inteira pra celebrar.',
-  'E a melhor parte ainda está por vir.',
-  'Que o contador nunca pare.',
-  'Pra sempre começa hoje.',
-  'O nosso para sempre começou aqui.',
-];
+const TEMPLATE_PRESETS: Record<TemplateKey, {
+  sinceText: string[];
+  storyHeadTitle: string[];
+  storyTitle: string[];
+  storyText: string[];
+  closeLine: string[];
+  capCenter: string[];
+  caps: [string[], string[], string[]];
+}> = {
+  namoro: {
+    sinceText: [
+      'A nossa história, contada em tempo real.',
+      'Cada segundo desde que viramos nós dois.',
+      'Do primeiro encontro até agora — e sem parar.',
+      'Um amor que o tempo só faz crescer.',
+      'Tudo começou num dia comum. E nunca mais foi comum.',
+    ],
+    storyHeadTitle: [
+      'De um match até hoje.',
+      'Como chegamos até aqui.',
+      'A história de nós dois.',
+    ],
+    storyTitle: [
+      'Desde o primeiro olhar',
+      'Quando tudo começou',
+      'A história de nós dois',
+      'O dia que mudou tudo',
+      'Onde começou',
+    ],
+    storyText: [
+      'Foi num instante, mas foi para sempre.',
+      'A gente não escolheu — simplesmente aconteceu.',
+      'Não era o momento certo. Mas foi o momento real.',
+      'Antes de saber seu nome, já sabia que era você.',
+      'Tinha tudo para não dar certo. E deu.',
+    ],
+    closeLine: [
+      'Uma vida inteira pra celebrar.',
+      'E a melhor parte ainda está por vir.',
+      'Que o contador nunca pare.',
+      'Pra sempre começa hoje.',
+      'O nosso para sempre começou aqui.',
+    ],
+    capCenter: [
+      'A nossa favorita',
+      'Quando vi você pela primeira vez',
+      'Amor à primeira vista — e a certeza veio depois',
+      'O dia que eu não esqueci mais',
+      'A minha pessoa preferida no mundo',
+      'Hoje, e sempre',
+    ],
+    caps: [
+      ['O nosso começo', 'Quando tudo era novidade', 'Onde tudo começou', 'O primeiro de muitos'],
+      ['A nossa viagem inesquecível', 'O mundo era só nosso', 'Longe de casa, perto de você', 'O melhor dia de todos'],
+      ['Hoje, e sempre', 'O nosso agora', 'E a melhor parte ainda vem', 'O nosso para sempre'],
+    ],
+  },
+  casamento: {
+    sinceText: [
+      'Casados e contando cada segundo de vida a dois.',
+      'Do sim até agora — e que o contador nunca pare.',
+      'Uma vida construída a dois, segundo por segundo.',
+      'Desde que dissemos sim, o amor só cresceu.',
+      'Juntos desde aquele dia — e para sempre depois disso.',
+    ],
+    storyHeadTitle: [
+      'Do primeiro sim até hoje.',
+      'Como chegamos ao altar.',
+      'A nossa história de amor.',
+    ],
+    storyTitle: [
+      'Como nos conhecemos',
+      'O dia do pedido',
+      'Do primeiro encontro ao altar',
+      'O nosso grande dia',
+      'O sim que mudou tudo',
+    ],
+    storyText: [
+      'Não era o que a gente planejava. Era muito melhor.',
+      'Antes do altar, já sabia que era pra vida toda.',
+      'O casamento foi o dia. O amor já era certo antes disso.',
+      'Prometemos um ao outro — e cada dia a gente lembra porquê.',
+      'Desde o sim, cada dia tem sido exatamente como sonhei.',
+    ],
+    closeLine: [
+      'Uma vida inteira para celebrar o nosso sim.',
+      'Que esse amor continue crescendo todos os dias.',
+      'O nosso sim foi só o começo.',
+      'Prometemos. E cada dia a gente cumpre.',
+      'Para sempre começa com um sim — e nunca termina.',
+    ],
+    capCenter: [
+      'O nosso grande dia',
+      'O momento em que dissemos sim',
+      'A nossa foto favorita do casamento',
+      'Unidos para sempre',
+      'O começo da nossa vida a dois',
+      'Eternamente juntos',
+    ],
+    caps: [
+      ['O nosso pedido', 'Quando soubemos que era pra sempre', 'O começo de tudo', 'Antes do altar'],
+      ['O grande dia', 'Casados para sempre', 'O nosso sim', 'A cerimônia que não esquecemos'],
+      ['Casados e felizes', 'A nossa lua de mel', 'A vida a dois', 'Para sempre juntos'],
+    ],
+  },
+  viagem: {
+    sinceText: [
+      'Contando cada segundo de aventura juntos.',
+      'De uma viagem que virou história — e não parou mais.',
+      'Os quilômetros que viraram memória, contados em tempo real.',
+      'Desde que partimos juntos, nada mais foi igual.',
+      'Cada destino novo, a mesma certeza de que é com você.',
+    ],
+    storyHeadTitle: [
+      'Como essa aventura começou.',
+      'Os lugares que viraram lembrança.',
+      'A nossa história pelo mundo.',
+    ],
+    storyTitle: [
+      'Como essa aventura começou',
+      'O primeiro destino',
+      'A viagem que ficou no coração',
+      'O dia que partimos juntos',
+      'Onde tudo aconteceu',
+    ],
+    storyText: [
+      'Não era o plano. Mas foi o melhor que fizemos.',
+      'Cada lugar ficou mais bonito com você do lado.',
+      'A gente foi longe e voltou sabendo que queria mais.',
+      'O melhor destino sempre foi estar com você.',
+      'Algumas viagens terminam. Essa lembrança fica para sempre.',
+    ],
+    closeLine: [
+      'Algumas viagens terminam. Essa lembrança fica.',
+      'O melhor destino sempre foi viver isso juntos.',
+      'Cada lugar ficou mais bonito com você.',
+      'A próxima aventura começa quando a gente quiser.',
+      'Guardar esse momento foi a melhor decisão da viagem.',
+    ],
+    capCenter: [
+      'A nossa foto favorita da viagem',
+      'O lugar que ficou no coração',
+      'Onde tudo aconteceu',
+      'O melhor destino de todos',
+      'O nosso momento preferido',
+      'Longe de casa, perto de você',
+    ],
+    caps: [
+      ['A partida', 'O primeiro dia', 'Prontos para a aventura', 'Antes de tudo começar'],
+      ['Em algum lugar do mundo', 'O momento inesquecível', 'Longe de casa', 'O melhor da viagem'],
+      ['A volta', 'Já com saudade', 'Até a próxima', 'A memória que fica'],
+    ],
+  },
+};
 
 /* ── live preview counter ────────────────────────────────────────── */
 function PreviewCounter({ startDate }: { startDate: string | null }) {
@@ -260,7 +368,7 @@ function AccordionSec({
   );
 }
 
-/* ── ed-vary: select (Sempre) vs textarea/input (Eterno) ─────────── */
+/* ── ed-vary: select (plano preset) vs textarea/input (Eterno) ─────────── */
 function VarySelect({
   id,
   label,
@@ -326,10 +434,10 @@ export default function EditorPage() {
   const navigate = useNavigate();
   const isNew = !pageId;
 
-  const selectedPlan = typeof sessionStorage !== 'undefined'
-    ? (sessionStorage.getItem('selected_plan') ?? 'sempre')
-    : 'sempre';
-  const isEterno = selectedPlan === 'eterno';
+  const [plan, setPlan] = useState<string>(() =>
+    (typeof sessionStorage !== 'undefined' && sessionStorage.getItem('selected_plan')) || 'sempre'
+  );
+  const isEterno = plan === 'eterno';
 
   const [loading, setLoading] = useState(!isNew);
   const [saving, setSaving] = useState(false);
@@ -392,6 +500,10 @@ export default function EditorPage() {
     if (!pageId) return;
     api.pages.get(pageId)
       .then((page) => {
+        if (page.plan) {
+          setPlan(page.plan);
+          sessionStorage.setItem('selected_plan', page.plan);
+        }
         setPageStatus(page.status);
         setTitle(page.title);
         setSlug(page.slug);
@@ -498,6 +610,14 @@ export default function EditorPage() {
     setTemplate(nextTemplate);
     setTheme(TEMPLATE_META[nextTemplate].colors[0]);
     setShowTemplates(false);
+    if (!isEterno) {
+      setSinceText('');
+      setStoryHeadTitle('');
+      setCloseLine('');
+      setCapCenter('');
+      setCaps(['', '', '']);
+      setStoryBlocks((prev) => prev.map((b) => ({ ...b, title: '', text: '' })));
+    }
     trackEvent('template_select');
   }
 
@@ -621,11 +741,61 @@ export default function EditorPage() {
     </div>
   );
 
-  if (pageId && pageStatus !== 'paid' && pageStatus !== 'published') return (
+  if (pageId && (pageStatus === 'published' || pageStatus === 'hidden')) {
+    const isHidden = pageStatus === 'hidden';
+    async function handleHide() {
+      if (!pageId) return;
+      try {
+        await api.pages.hide(pageId);
+        navigate('/minhas-paginas');
+      } catch {
+        alert('Não foi possível ocultar a página. Tente novamente.');
+      }
+    }
+    async function handleRepublish() {
+      if (!pageId) return;
+      try {
+        await api.pages.publish(pageId);
+        navigate('/minhas-paginas');
+      } catch {
+        alert('Não foi possível republicar a página. Tente novamente.');
+      }
+    }
+    return (
+      <div className={styles.edBody}>
+        <header className={styles.edTop}>
+          <Link to="/minhas-paginas" className={styles.edTopBrand}>
+            Somos Eternos
+            <span className={styles.edTopStep}>{isHidden ? 'Página oculta' : 'Publicada'}</span>
+          </Link>
+        </header>
+        <main className={styles.lockedEditor}>
+          <div className={styles.lockedCard}>
+            <span className="eyebrow eyebrow--center">{isHidden ? 'Página oculta' : 'Página publicada'}</span>
+            <h1>{isHidden ? 'Esta página está fora do ar.' : 'Esta página já foi publicada.'}</h1>
+            <p>{isHidden ? 'A página está oculta e não pode ser acessada pelo link. Você pode publicá-la novamente.' : 'Depois da publicação, a edição fica bloqueada. Para retirar a página do ar, use "Ocultar".'}</p>
+            <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap', justifyContent: 'center' }}>
+              <Link to="/minhas-paginas" className="btn btn--ghost-dark btn--lg">← Minhas páginas</Link>
+              {isHidden ? (
+                <button className="btn btn--primary btn--lg" onClick={handleRepublish}>Publicar novamente</button>
+              ) : (
+                <>
+                  <a href={`/p/${pageId}`} target="_blank" rel="noopener noreferrer" className="btn btn--primary btn--lg">Ver página →</a>
+                  <button className="btn btn--ghost-dark btn--lg" onClick={handleHide}>Ocultar página</button>
+                </>
+              )}
+            </div>
+          </div>
+        </main>
+      </div>
+    );
+  }
+
+  if (pageId && pageStatus !== 'paid') return (
     <div className={styles.edBody}>
       <header className={styles.edTop}>
         <Link to="/minhas-paginas" className={styles.edTopBrand}>
-          Sempre<span className={styles.pt}>.</span>
+          Somos Eternos
           <span className={styles.edTopStep}>Editor bloqueado</span>
         </Link>
         <div className={styles.edTopActions}>
@@ -648,7 +818,7 @@ export default function EditorPage() {
     .map((key) => THEMES.find((t) => t.key === key))
     .filter((t): t is typeof THEMES[number] => Boolean(t));
   const currentThemeData = THEMES.find((t) => t.key === theme) ?? availableThemes[0] ?? THEMES[0];
-  const planLabel = isEterno ? 'Plano Eterno · R$ 37,90' : 'Plano Sempre · R$ 27,90';
+  const planLabel = isEterno ? 'Plano Eterno · R$ 37,90' : 'Plano Somos Eternos · R$ 27,90';
   const saveStatus = saving ? 'Salvando rascunho' : saveMsg ? 'Rascunho salvo' : '';
   const previewStartIso = startDate ? new Date(`${startDate}T${startTime || '12:00'}:00`).toISOString() : new Date().toISOString();
   const previewPage: CouplePage = {
@@ -681,7 +851,7 @@ export default function EditorPage() {
       {/* ── top bar ──────────────────────────────────────────── */}
       <header className={styles.edTop}>
         <Link to="/minhas-paginas" className={styles.edTopBrand}>
-          Sempre<span className={styles.pt}>.</span>
+          Somos Eternos
           <span className={styles.edTopStep}>Editor da sua página</span>
         </Link>
         <span className={styles.edPlanPill}>♥ {planLabel}</span>
@@ -724,6 +894,12 @@ export default function EditorPage() {
             <h1>A página de vocês começa em branco.</h1>
             <p>Preencha os campos abaixo e veja tudo ganhar vida na prévia ao lado. Quando estiver do jeito de vocês, é só publicar.</p>
           </div>
+
+          {!isEterno && (
+            <div className={styles.planHint}>
+              <span>No plano Sempre, você escolhe entre frases prontas do template selecionado.</span>
+            </div>
+          )}
 
           {error && (
             <div className={styles.errBanner}>
@@ -841,11 +1017,11 @@ export default function EditorPage() {
             <VarySelect
               id="fSince"
               label="Frase de abertura"
-              presets={SINCE_PRESETS}
+              presets={TEMPLATE_PRESETS[template].sinceText}
               value={sinceText}
               onChange={setSinceText}
               isEterno={isEterno}
-              placeholder="Casados desde o nosso sim — e contando cada segundo de vida a dois."
+              placeholder="A nossa história, contada em tempo real."
               maxLength={160}
               multiline
             />
@@ -877,7 +1053,7 @@ export default function EditorPage() {
           </AccordionSec>
 
           {/* 3 · As fotos de vocês */}
-          <AccordionSec num="3" title="As fotos de vocês" sub="Quatro fotos em estilo Polaroid" open={openSecs.has(3)} onToggle={() => toggleSec(3)}>
+          <AccordionSec num="3" title="As fotos de vocês" sub="Quatro fotos especiais da história" open={openSecs.has(3)} onToggle={() => toggleSec(3)}>
             {!pageId && (
               <p className={styles.edHint} style={{ color: 'var(--terra)', marginBottom: 12 }}>
                 Salve a página primeiro para enviar fotos.
@@ -896,7 +1072,7 @@ export default function EditorPage() {
               <VarySelect
                 id="capCenter"
                 label=""
-                presets={CAP_CENTER_PRESETS}
+                presets={TEMPLATE_PRESETS[template].capCenter}
                 value={capCenter}
                 onChange={setCapCenter}
                 isEterno={isEterno}
@@ -919,7 +1095,7 @@ export default function EditorPage() {
                   <VarySelect
                     id={`cap${pos}`}
                     label=""
-                    presets={CAP_PRESETS[pos - 1] ?? []}
+                    presets={TEMPLATE_PRESETS[template].caps[pos - 1] ?? []}
                     value={caps[pos - 1]}
                     onChange={(v) => updateCap(pos - 1, v)}
                     isEterno={isEterno}
@@ -942,7 +1118,7 @@ export default function EditorPage() {
               <VarySelect
                 id="cap3"
                 label=""
-                presets={CAP_PRESETS[2] ?? []}
+                presets={TEMPLATE_PRESETS[template].caps[2] ?? []}
                 value={caps[2]}
                 onChange={(v) => updateCap(2, v)}
                 isEterno={isEterno}
@@ -970,11 +1146,11 @@ export default function EditorPage() {
             <VarySelect
               id="fStoryTitle"
               label="Título da seção"
-              presets={['De um match até o altar.', 'Como chegamos até aqui.', 'A história de nós dois.']}
+              presets={TEMPLATE_PRESETS[template].storyHeadTitle}
               value={storyHeadTitle}
               onChange={setStoryHeadTitle}
               isEterno={isEterno}
-              placeholder="De um match até o altar."
+              placeholder="A história de nós dois."
               maxLength={80}
             />
 
@@ -1006,7 +1182,7 @@ export default function EditorPage() {
                 <VarySelect
                   id={`fS${idx + 1}Title`}
                   label={`Capítulo ${idx + 1} — título`}
-                  presets={STORY_TITLE_PRESETS}
+                  presets={TEMPLATE_PRESETS[template].storyTitle}
                   value={block.title}
                   onChange={(v) => updateStoryBlock(idx, 'title', v)}
                   isEterno={isEterno}
@@ -1016,7 +1192,7 @@ export default function EditorPage() {
                 <VarySelect
                   id={`fS${idx + 1}Text`}
                   label={`Capítulo ${idx + 1} — texto`}
-                  presets={STORY_TEXT_PRESETS}
+                  presets={TEMPLATE_PRESETS[template].storyText}
                   value={block.text}
                   onChange={(v) => updateStoryBlock(idx, 'text', v)}
                   isEterno={isEterno}
@@ -1033,7 +1209,7 @@ export default function EditorPage() {
             <VarySelect
               id="fCloseLine"
               label="Frase final"
-              presets={CLOSE_LINE_PRESETS}
+              presets={TEMPLATE_PRESETS[template].closeLine}
               value={closeLine}
               onChange={setCloseLine}
               isEterno={isEterno}

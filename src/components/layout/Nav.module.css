@@ -13,6 +13,14 @@
   border-bottom-color: var(--line);
 }
 
+/* menu aberto → header sempre sólido, mesmo sem scroll */
+.menuOpen {
+  background: var(--bg) !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+  border-bottom-color: var(--line) !important;
+}
+
 .navIn {
   display: flex;
   align-items: center;
@@ -104,6 +112,14 @@
   .count { display: none; }
   .burger { display: block; }
 
+  /* CTA compacto no mobile — evita overflow do header */
+  .cta :global(.btn) {
+    font-size: 13px;
+    padding: 9px 16px;
+    min-height: 38px;
+    white-space: nowrap;
+  }
+
   .links.open {
     display: flex;
     flex-direction: column;
@@ -114,9 +130,20 @@
     gap: 24px;
     align-items: flex-start;
     z-index: 40;
+    overflow-y: auto;
+    overscroll-behavior: contain;
   }
 
   .links.open a {
     font-size: 22px;
+  }
+}
+
+@media (max-width: 380px) {
+  /* telas muito pequenas: CTA ainda mais compacto */
+  .cta :global(.btn) {
+    font-size: 11px;
+    padding: 8px 12px;
+    min-height: 34px;
   }
 }

@@ -251,7 +251,7 @@ export default function LandingPage() {
               Tem uma foto no celular de vocês que nunca foi deletada. Ela merece mais do que o rolo da câmera.
             </h2>
             <p className="lede">
-              Redes sociais somem, algoritmos enterram, contas são desativadas — e nada que você posta é seu de verdade. O <em className="terra">Sempre</em> é a página exclusiva do relacionamento de vocês: um lugar permanente, com endereço próprio e um contador que não para nunca. Pronto em 5 minutos.
+              Redes sociais somem, algoritmos enterram, contas são desativadas — e nada que você posta é seu de verdade. O <em className="terra">Somos Eternos</em> é a página exclusiva do relacionamento de vocês: um lugar permanente, com endereço próprio e um contador que não para nunca. Pronto em 5 minutos.
             </p>
           </div>
 
@@ -276,7 +276,7 @@ export default function LandingPage() {
 
           <div className={styles.demoFeature}>
             {[
-              { n: '01', title: 'Fotos em Polaroid', desc: 'Espalhadas como se estivessem em cima de uma mesa.' },
+              { n: '01', title: 'Fotos especiais', desc: 'Espalhadas como se estivessem em cima de uma mesa.' },
               { n: '02', title: 'Uma foto central', desc: 'A favorita de vocês, no centro de tudo.' },
               { n: '03', title: 'A história de vocês', desc: 'Fotos e texto. Você escreve o que quiser.' },
               { n: '04', title: 'Contador em tempo real', desc: 'Agora mesmo, enquanto você lê isso, ele já está rodando.' },
@@ -448,15 +448,15 @@ export default function LandingPage() {
 
           <div className={`${styles.plansGrid} reveal`}>
             <div className={styles.planCard}>
-              <div className={styles.planName}>Sempre</div>
+              <div className={styles.planName}>Somos Eternos</div>
               <div className={styles.planPrice}><span className={styles.cur}>R$</span><span className={styles.val}>27<span className={styles.dec}>,90</span></span></div>
-              <div className={styles.planTag}>pagamento único · acesso imediato</div>
+              <div className={styles.planTag}>cobrança anual · acesso imediato</div>
               <p className={styles.planPitch}>"Escolha a frase perfeita — a nossa equipe já escreveu as melhores para você."</p>
               <ul className={styles.planList}>
                 <li><span className={styles.ck}>✓</span> Frases escritas com carinho para cada momento</li>
-                <li><span className={styles.ck}>✓</span> 3 fotos Polaroid + foto central</li>
+                <li><span className={styles.ck}>✓</span> 3 fotos especiais + foto central</li>
                 <li><span className={styles.ck}>✓</span> Contador ao vivo e música no Spotify</li>
-                <li><span className={styles.ck}>✓</span> Link exclusivo · acesso vitalício · garantia 7 dias</li>
+                <li><span className={styles.ck}>✓</span> Link exclusivo · 12 meses inclusos · garantia 7 dias</li>
               </ul>
               <Link to="/entrar?plan=sempre" className="btn btn--ghost btn--lg" onClick={() => trackEvent('pricing_cta_click')}>
                 Criar com frases prontas <span className="arrow">→</span>
@@ -467,13 +467,13 @@ export default function LandingPage() {
               <span className={styles.planBadge}>♥ Mais escolhido</span>
               <div className={styles.planName}>Eterno</div>
               <div className={styles.planPrice}><span className={styles.cur}>R$</span><span className={styles.val}>37<span className={styles.dec}>,90</span></span></div>
-              <div className={styles.planTag}>pagamento único · acesso imediato</div>
+              <div className={styles.planTag}>cobrança anual · acesso imediato</div>
               <p className={styles.planPitch}>"Cada palavra escrita por você — porque só você sabe como foi o começo de vocês."</p>
               <ul className={styles.planList}>
                 <li><span className={styles.ck}>✓</span> <strong>Escreva cada título e texto com as suas palavras</strong></li>
-                <li><span className={styles.ck}>✓</span> 3 fotos Polaroid + foto central</li>
+                <li><span className={styles.ck}>✓</span> 3 fotos especiais + foto central</li>
                 <li><span className={styles.ck}>✓</span> Contador ao vivo e música no Spotify</li>
-                <li><span className={styles.ck}>✓</span> Link exclusivo · acesso vitalício · garantia 7 dias</li>
+                <li><span className={styles.ck}>✓</span> Link exclusivo · 12 meses inclusos · garantia 7 dias</li>
               </ul>
               <Link to="/entrar?plan=eterno" className="btn btn--primary btn--lg" onClick={() => trackEvent('pricing_cta_click')}>
                 Escrever com minhas palavras <span className="arrow">→</span>
@@ -484,7 +484,7 @@ export default function LandingPage() {
           <div className={`${styles.anchor} reveal`}>
             <div className={styles.anchorItem}><div className={styles.anchorBig}>Flores · R$ 30</div><div className={styles.anchorSm}>duram 3 dias</div></div>
             <div className={styles.anchorItem}><div className={styles.anchorBig}>Jantar · R$ 150</div><div className={styles.anchorSm}>dura 2 horas</div></div>
-            <div className={styles.anchorItem}><div className={styles.anchorBig} style={{ color: 'var(--terra-light)' }}>Sempre · a partir de R$ 27,90</div><div className={styles.anchorSm}>dura para sempre</div></div>
+            <div className={styles.anchorItem}><div className={styles.anchorBig} style={{ color: 'var(--terra-light)' }}>Somos Eternos · a partir de R$ 27,90</div><div className={styles.anchorSm}>dura para sempre</div></div>
           </div>
         </div>
       </section>
@@ -500,7 +500,7 @@ export default function LandingPage() {
             <FaqItem q="Precisa instalar alguma coisa?" a="Não. Funciona pelo navegador, em qualquer celular ou computador. Você entra só com o seu e-mail e um código de verificação — sem senha e sem rede social." />
             <FaqItem q="Quanto tempo leva pra criar?" a="5 minutos no máximo. Você sobe as fotos, escreve os textos, escolhe a data do contador — feito." />
             <FaqItem q="Minha página some depois de um tempo?" a="Não. A página fica no ar enquanto o plano estiver ativo. Para quem compra agora, garantimos 12 meses sem custo adicional." />
-            <FaqItem q="Posso editar depois?" a="Sim, quantas vezes quiser. Trocou a foto favorita? Quer adicionar um novo texto? Sem custo." />          
+            <FaqItem q="Posso editar depois de publicar?" a="Não. Depois da publicação, a página fica protegida para garantir que o presente seja uma surpresa. Antes de publicar, você pode editar quantas vezes quiser. Se precisar retirar a página do ar, use a opção 'Ocultar' na sua área de páginas." />          
             <FaqItem q="O link é público?" a="Sim, poderá ser compartilhada por você com quem quiser. Após a publicação, qualquer pessoa que tiver o link poderá acessar e visualizar a página." />
           </div>
         </div>

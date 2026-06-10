@@ -107,7 +107,7 @@ export default function PaymentApprovedPage() {
   return (
     <div className={styles.page}>
       <nav className={styles.topBar}>
-        <Link to="/" className={styles.brand}>Sempre<span style={{ color: 'var(--terra)' }}>.</span></Link>
+        <Link to="/" className={styles.brand}>Somos Eternos</Link>
       </nav>
 
       <div className={styles.card}>

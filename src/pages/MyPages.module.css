@@ -118,6 +118,11 @@
 .status_published { background: rgba(58,158,95,.12); color: #2a7a4a; }
 .status_draft { background: var(--bg-2); color: var(--ink-3); }
 .status_pending_payment { background: rgba(196,97,74,.1); color: var(--terra-dark); }
+.status_paid { background: rgba(80,120,200,.1); color: #3a5ab0; }
+.status_hidden { background: rgba(100,100,100,.1); color: var(--ink-3); }
+
+.copyBtn { transition: background .15s; }
+.hideBtn { color: var(--ink-3) !important; }
 
 .deleteBtn {
   font-size: 20px;

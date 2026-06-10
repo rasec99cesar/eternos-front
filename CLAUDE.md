@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project
 
-**sempre-web** — React + TypeScript + Vite frontend for the *Sempre* platform, where couples create personalized relationship pages. Deployed to Cloudflare Pages.
+**sempre-web** — React + TypeScript + Vite frontend for the *Somos Eternos* platform, where couples create personalized relationship pages. Deployed to Cloudflare Pages.
 
 ## Commands
 
@@ -34,7 +34,7 @@ A single `request<T>()` wrapper around `fetch` with `credentials: 'include'` for
 Single source of truth for TypeScript types and Zod schemas used for form validation. Includes `CouplePage`, `User`, `Template`, `Order`, checkout types, and the exhaustive `UmamiEventName` union. Import types from here, never redefine them in components.
 
 ### Plan tiers
-Two plans: **sempre** and **eterno**. The selected plan is read from `sessionStorage` key `selected_plan`. It changes editor behavior: `sempre` users see preset `<select>` dropdowns for text fields; `eterno` users get free-text `<input>`/`<textarea>`. This logic lives in `EditorPage` via the `isEterno` boolean and the `VarySelect` component.
+Two technical plan keys are **sempre** and **eterno**. The selected plan is read from `sessionStorage` key `selected_plan`. It changes editor behavior: `sempre` users see preset `<select>` dropdowns for text fields; `eterno` users get free-text `<input>`/`<textarea>`. This logic lives in `EditorPage` via the `isEterno` boolean and the `VarySelect` component.
 
 ### CouplePage data model
 `storyJson` and `themeConfigJson` are JSON strings stored on the DB record. The editor serializes/deserializes them; `themeConfigJson` carries only the `theme` key (legacy Spotify fields have been migrated to dedicated DB columns). Photo assets use numeric positions: 0 = center polaroid, 1–3 = side polaroids, 4–5 = story chapter photos.

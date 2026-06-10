@@ -19,7 +19,7 @@ export default function PublicPageView() {
       .then((p) => {
         setPage(p);
         trackEvent('public_page_view');
-        document.title = `${p.personOneName} & ${p.personTwoName} — Sempre`;
+        document.title = `${p.personOneName} & ${p.personTwoName} — Somos Eternos`;
         document.querySelector('meta[name="description"]')?.setAttribute('content', p.mainText ?? p.title);
         document.querySelector('meta[property="og:title"]')?.setAttribute('content', `${p.personOneName} & ${p.personTwoName}`);
         document.querySelector('meta[property="og:description"]')?.setAttribute('content', p.mainText ?? '');

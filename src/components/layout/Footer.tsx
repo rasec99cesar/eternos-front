@@ -7,7 +7,7 @@ export function Footer() {
       <div className="wrap">
         <div className={styles.top}>
           <div>
-            <Link to="/" className={styles.brand}>Sempre<span className={styles.dot}>.</span></Link>
+            <Link to="/" className={styles.brand}>Somos Eternos</Link>
             <p className={styles.tagline}>A memória de vocês, contando em tempo real.</p>
           </div>
           <div className={styles.links}>
@@ -19,7 +19,7 @@ export function Footer() {
             </div>
             <div className={styles.col}>
               <h5>Temas</h5>
-              <a href="/#exemplos">Polaroid</a>
+              <a href="/#exemplos">Namoro</a>
               <a href="/#exemplos">Casamento</a>
               <a href="/#exemplos">Viagem</a>
             </div>
@@ -31,7 +31,7 @@ export function Footer() {
           </div>
         </div>
         <div className={styles.bot}>
-          <span>© 2026 Sempre · Feito com cuidado para durar.</span>
+          <span>© 2026 Somos Eternos · Feito com cuidado para durar.</span>
           <span>Pagamento 100% seguro · Garantia de 7 dias</span>
         </div>
       </div>

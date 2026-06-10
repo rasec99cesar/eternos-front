@@ -75,6 +75,9 @@ export const api = {
 
     publish: (id: string) =>
       request<CouplePage>(`/pages/${id}/publish`, { method: 'POST' }),
+
+    hide: (id: string) =>
+      request<CouplePage>(`/pages/${id}/hide`, { method: 'POST' }),
   },
 
   // ─── Templates ──────────────────────────────────────────────────────────────

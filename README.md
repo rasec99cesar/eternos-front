@@ -1,6 +1,6 @@
 # sempre-web
 
-Frontend da plataforma Sempre — React + TypeScript + Vite.
+Frontend da plataforma Somos Eternos — React + TypeScript + Vite.
 
 ## Stack
 

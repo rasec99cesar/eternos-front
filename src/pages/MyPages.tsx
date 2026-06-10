@@ -12,6 +12,7 @@ const STATUS_LABEL: Record<string, string> = {
   paid: 'Pago',
   published: 'Publicado',
   archived: 'Arquivado',
+  hidden: 'Oculta',
 };
 
 export default function MyPagesPage() {
@@ -20,6 +21,7 @@ export default function MyPagesPage() {
   const [pages, setPages] = useState<CouplePage[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
+  const [copiedId, setCopiedId] = useState<string | null>(null);
 
   useEffect(() => {
     api.pages.list()
@@ -44,10 +46,34 @@ export default function MyPagesPage() {
     }
   }
 
+  async function copyLink(url: string, id: string) {
+    await navigator.clipboard.writeText(url).catch(() => {});
+    setCopiedId(id);
+    setTimeout(() => setCopiedId(null), 2000);
+  }
+
+  async function hidePage(id: string) {
+    try {
+      const updated = await api.pages.hide(id);
+      setPages((prev) => prev.map((p) => p.id === id ? updated : p));
+    } catch {
+      setError('Erro ao ocultar a página.');
+    }
+  }
+
+  async function republishPage(id: string) {
+    try {
+      const updated = await api.pages.publish(id);
+      setPages((prev) => prev.map((p) => p.id === id ? updated : p));
+    } catch {
+      setError('Erro ao publicar a página.');
+    }
+  }
+
   return (
     <div className={styles.page}>
       <header className={styles.topBar}>
-        <Link to="/" className={styles.brand}>Sempre<span style={{ color: 'var(--terra)' }}>.</span></Link>
+        <Link to="/" className={styles.brand}>Somos Eternos</Link>
         <div className={styles.topRight}>
           <Link to="/criar" className="btn btn--primary" style={{ minHeight: 40, padding: '10px 20px', fontSize: 14 }}>
             + Nova página
@@ -90,34 +116,53 @@ export default function MyPagesPage() {
                 <h2 className={styles.cardTitle}>{p.title}</h2>
                 <p className={styles.cardSub}>{p.personOneName} & {p.personTwoName}</p>
 
-                {p.publicUrl && (
+                {p.publicUrl && p.status === 'published' && (
                   <a href={p.publicUrl} target="_blank" rel="noopener noreferrer" className={styles.publicLink}>
                     {p.publicUrl.replace('https://', '')}
                   </a>
                 )}
 
                 <div className={styles.cardActions}>
-                  {p.status === 'paid' || p.status === 'published' ? (
-                    <Link to={`/editor/${p.id}`} className="btn btn--ghost-dark" style={{ fontSize: 14, minHeight: 38, padding: '8px 16px' }}>
-                      Editar
-                    </Link>
-                  ) : (
-                    <Link to={`/planos/${p.id}`} className="btn btn--ghost-dark" style={{ fontSize: 14, minHeight: 38, padding: '8px 16px' }}>
-                      Pagar
-                    </Link>
-                  )}
-                  {p.status === 'published' && p.publicUrl ? (
-                    <a href={p.publicUrl} target="_blank" rel="noopener noreferrer" className="btn btn--primary" style={{ fontSize: 14, minHeight: 38, padding: '8px 16px' }}>
-                      Ver →
-                    </a>
+                  {p.status === 'published' ? (
+                    <>
+                      {p.publicUrl && (
+                        <a href={p.publicUrl} target="_blank" rel="noopener noreferrer" className="btn btn--primary" style={{ fontSize: 14, minHeight: 38, padding: '8px 16px' }}>
+                          Ver →
+                        </a>
+                      )}
+                      {p.publicUrl && (
+                        <button className={`btn btn--ghost-dark ${styles.copyBtn}`} style={{ fontSize: 14, minHeight: 38, padding: '8px 16px' }} onClick={() => copyLink(p.publicUrl!, p.id)}>
+                          {copiedId === p.id ? 'Copiado!' : 'Copiar link'}
+                        </button>
+                      )}
+                      <button className={`btn btn--ghost-dark ${styles.hideBtn}`} style={{ fontSize: 14, minHeight: 38, padding: '8px 16px' }} onClick={() => hidePage(p.id)}>
+                        Ocultar
+                      </button>
+                    </>
+                  ) : p.status === 'hidden' ? (
+                    <>
+                      <button className="btn btn--primary" style={{ fontSize: 14, minHeight: 38, padding: '8px 16px' }} onClick={() => republishPage(p.id)}>
+                        Publicar novamente
+                      </button>
+                    </>
                   ) : p.status === 'paid' ? (
-                    <Link to={`/editor/${p.id}`} className="btn btn--primary" style={{ fontSize: 14, minHeight: 38, padding: '8px 16px' }}>
-                      Publicar
-                    </Link>
+                    <>
+                      <Link to={`/editor/${p.id}`} className="btn btn--ghost-dark" style={{ fontSize: 14, minHeight: 38, padding: '8px 16px' }}>
+                        Editar
+                      </Link>
+                      <Link to={`/editor/${p.id}`} className="btn btn--primary" style={{ fontSize: 14, minHeight: 38, padding: '8px 16px' }}>
+                        Publicar
+                      </Link>
+                    </>
                   ) : (
-                    <Link to={`/planos/${p.id}`} className="btn btn--primary" style={{ fontSize: 14, minHeight: 38, padding: '8px 16px' }}>
-                      Continuar →
-                    </Link>
+                    <>
+                      <Link to={`/planos/${p.id}`} className="btn btn--ghost-dark" style={{ fontSize: 14, minHeight: 38, padding: '8px 16px' }}>
+                        Pagar
+                      </Link>
+                      <Link to={`/planos/${p.id}`} className="btn btn--primary" style={{ fontSize: 14, minHeight: 38, padding: '8px 16px' }}>
+                        Continuar →
+                      </Link>
+                    </>
                   )}
                 </div>
               </div>

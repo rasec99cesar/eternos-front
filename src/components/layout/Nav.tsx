@@ -15,16 +15,22 @@ export function Nav() {
     return () => window.removeEventListener('scroll', onScroll);
   }, []);
 
+  /* lock body scroll while mobile menu is open */
+  useEffect(() => {
+    document.body.style.overflow = menuOpen ? 'hidden' : '';
+    return () => { document.body.style.overflow = ''; };
+  }, [menuOpen]);
+
   const handleLogout = async () => {
     await logout();
     navigate('/');
   };
 
   return (
-    <header className={`${styles.nav} ${scrolled ? styles.scrolled : ''}`}>
+    <header className={`${styles.nav} ${scrolled ? styles.scrolled : ''} ${menuOpen ? styles.menuOpen : ''}`}>
       <div className={`wrap ${styles.navIn}`}>
         <Link to="/" className={styles.brand}>
-          Sempre<span className={styles.dot}>.</span>
+          Somos Eternos
         </Link>
 
         <nav className={`${styles.links} ${menuOpen ? styles.open : ''}`}>
@@ -57,7 +63,8 @@ export function Nav() {
         <button
           className={`${styles.burger} ${menuOpen ? styles.burgerOpen : ''}`}
           onClick={() => setMenuOpen(!menuOpen)}
-          aria-label="Menu"
+          aria-label={menuOpen ? 'Fechar menu' : 'Abrir menu'}
+          aria-expanded={menuOpen}
         >
           <span /><span /><span />
         </button>

@@ -103,7 +103,7 @@ export default function CreatePage() {
   return (
     <div className={styles.page}>
       <header className={styles.topBar}>
-        <Link to="/" className={styles.brand}>Sempre<span className={styles.pt}>.</span></Link>
+        <Link to="/" className={styles.brand}>Somos Eternos</Link>
         <span className={styles.secure}>Criação segura</span>
       </header>
 

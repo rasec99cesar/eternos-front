@@ -7,27 +7,27 @@ import styles from './Plans.module.css';
 const PLANS = [
   {
     key: 'sempre' as const,
-    name: 'Sempre',
-    price: 'R$ 27,90',
+    name: 'Somos Eternos',
+    price: 'R$ 27,90/ano',
     pitch: '"Escolha a frase perfeita — a nossa equipe já escreveu as melhores para você."',
     features: [
       'Frases escritas com carinho para cada momento',
-      '3 fotos Polaroid + foto central',
+      '3 fotos especiais + foto central',
       'Contador ao vivo e música no Spotify',
-      'Link exclusivo · acesso vitalício · garantia 7 dias',
+      'Link exclusivo · 12 meses inclusos · garantia 7 dias',
     ],
   },
   {
     key: 'eterno' as const,
     name: 'Eterno',
-    price: 'R$ 37,90',
+    price: 'R$ 37,90/ano',
     featured: true,
     pitch: '"Cada palavra escrita por você — porque só você sabe como foi o começo de vocês."',
     features: [
       'Escreva cada título e texto com as suas palavras',
-      '3 fotos Polaroid + foto central',
+      '3 fotos especiais + foto central',
       'Contador ao vivo e música no Spotify',
-      'Link exclusivo · acesso vitalício · garantia 7 dias',
+      'Link exclusivo · 12 meses inclusos · garantia 7 dias',
     ],
   },
 ];
@@ -57,6 +57,7 @@ export default function PlansPage() {
       });
       sessionStorage.setItem('checkout_page_id', pageId);
       sessionStorage.setItem('checkout_session_id', sessionId);
+      sessionStorage.setItem('selected_plan', selected);
       trackEvent('publish_checkout_created');
       trackEvent('publish_checkout_redirect');
       window.location.href = url;
@@ -71,7 +72,7 @@ export default function PlansPage() {
     <div className={styles.page}>
       <nav className={styles.topBar}>
         <Link to="/criar" className={styles.back}>← Trocar template</Link>
-        <span className={styles.brand}>Sempre<span style={{ color: 'var(--terra)' }}>.</span></span>
+        <span className={styles.brand}>Somos Eternos</span>
         <span />
       </nav>
 
@@ -107,11 +108,11 @@ export default function PlansPage() {
         {/* Summary */}
         <div className={styles.summary}>
           <div className={styles.summaryRow}>
-            <span>Plano {selected === 'sempre' ? 'Sempre' : 'Eterno'}</span>
-            <span>{selected === 'sempre' ? 'R$ 27,90' : 'R$ 37,90'}</span>
+            <span>Plano {selected === 'sempre' ? 'Somos Eternos' : 'Eterno'}</span>
+            <span>{selected === 'sempre' ? 'R$ 27,90/ano' : 'R$ 37,90/ano'}</span>
           </div>
           <div className={`${styles.summaryRow} ${styles.summaryTotal}`}>
-            <span>Total</span>
+            <span>Total (cobrança anual)</span>
             <span>{selected === 'sempre' ? 'R$ 27,90' : 'R$ 37,90'}</span>
           </div>
         </div>

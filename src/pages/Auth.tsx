@@ -123,7 +123,7 @@ export default function AuthPage() {
   return (
     <div className={styles.page}>
       <nav className={styles.topBar}>
-        <Link to="/" className={styles.brand}>Sempre<span className={styles.dot}>.</span></Link>
+        <Link to="/" className={styles.brand}>Somos Eternos</Link>
       </nav>
 
       <div className={styles.card}>
@@ -131,7 +131,7 @@ export default function AuthPage() {
 
         {step === 'email' ? (
           <>
-            <h1 className={styles.title}>Bem-vindo ao Sempre</h1>
+            <h1 className={styles.title}>Bem-vindo ao Somos Eternos</h1>
             <p className={styles.sub}>Digite seu e-mail para receber o código de acesso</p>
 
             <form onSubmit={handleEmailSubmit} className={styles.form}>

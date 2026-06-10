@@ -87,7 +87,7 @@ export default function CouplePageRenderer({
       {showChrome && (
         <header className={styles.cbar}>
           <div className={`${styles.cwrap} ${styles.cbarIn}`}>
-            <Link to="/" className={styles.cbarBrand}>Sempre<span className={styles.pt}>.</span></Link>
+            <Link to="/" className={styles.cbarBrand}>Somos Eternos</Link>
             <div className={styles.cbarShare}>
               {onCopy && <button className={styles.cbarCopy} type="button" onClick={onCopy}>{copied ? '✓ Copiado' : 'Copiar link'}</button>}
               {onShareWhatsapp && <button className={styles.cbarWa} type="button" onClick={onShareWhatsapp}>WhatsApp</button>}
@@ -142,10 +142,9 @@ export default function CouplePageRenderer({
       {showChrome && (
         <footer className={styles.cmade}>
           <div className={styles.cwrap}>
-            <span className={styles.cmadeK}>Esta página foi feita no Sempre</span>
+            <span className={styles.cmadeK}>Esta página foi feita no Somos Eternos</span>
             <h2>Toda história de amor merece uma casa própria na internet.</h2>
             <Link to="/entrar" className="btn btn--lg" style={{ background: 'var(--terra)', color: '#fff' }}>Criar a nossa página assim →</Link>
-            <p className={styles.cmadeSmall}>R$ 27,90 · pagamento único · acesso vitalício</p>
           </div>
         </footer>
       )}
