@@ -2,7 +2,7 @@ import { useState, useRef, useEffect } from 'react';
 import { useNavigate, useSearchParams, Link } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import { api } from '../services/api';
-import { trackEvent } from '../utils/analytics';
+import { isPlanKey, trackEvent } from '../utils/analytics';
 import styles from './Auth.module.css';
 
 type Step = 'email' | 'code';
@@ -25,7 +25,9 @@ export default function AuthPage() {
 
   // Redirect if already authed
   useEffect(() => {
-    if (user) navigate(redirect, { replace: true });
+    if (!user) return;
+    if (isPlanKey(defaultPlan)) sessionStorage.setItem('selected_plan', defaultPlan);
+    navigate(defaultPlan ? `${redirect}?plan=${defaultPlan}` : redirect, { replace: true });
   }, [user]);
 
   function startCooldown() {
@@ -110,6 +112,7 @@ export default function AuthPage() {
     try {
       const userData = await api.auth.verifyCode(email.trim(), fullCode);
       trackEvent('auth_code_success');
+      if (isPlanKey(defaultPlan)) sessionStorage.setItem('selected_plan', defaultPlan);
       setUser(userData);
       navigate(defaultPlan ? `${redirect}?plan=${defaultPlan}` : redirect, { replace: true });
     } catch (err: unknown) {

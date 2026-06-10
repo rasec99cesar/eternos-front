@@ -1,5 +1,5 @@
 import { BrowserRouter, Routes, Route, useLocation } from 'react-router-dom';
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { AuthProvider } from './contexts/AuthContext';
 import { ProtectedRoute } from './components/ProtectedRoute';
@@ -22,10 +22,12 @@ function SeoManager() {
 
 function MetaPixelPageView() {
   const { pathname, search } = useLocation();
+  const didSkipInitialPageView = useRef(false);
+
   useEffect(() => {
     if (!window.fbq) return;
-    if (!sessionStorage.getItem('meta_pixel_initial_pageview_sent')) {
-      sessionStorage.setItem('meta_pixel_initial_pageview_sent', '1');
+    if (!didSkipInitialPageView.current) {
+      didSkipInitialPageView.current = true;
       return;
     }
     trackMetaPageView();

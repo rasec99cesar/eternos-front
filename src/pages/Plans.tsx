@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import { api } from '../services/api';
-import { trackEvent } from '../utils/analytics';
+import { isPlanKey, trackEvent, trackMetaInitiateCheckout } from '../utils/analytics';
 import styles from './Plans.module.css';
 
 const PLANS = [
@@ -35,7 +35,10 @@ const PLANS = [
 export default function PlansPage() {
   const { pageId } = useParams<{ pageId: string }>();
   const navigate = useNavigate();
-  const [selected, setSelected] = useState<'sempre' | 'eterno'>('eterno');
+  const [selected, setSelected] = useState<'sempre' | 'eterno'>(() => {
+    const storedPlan = typeof sessionStorage !== 'undefined' ? sessionStorage.getItem('selected_plan') : null;
+    return isPlanKey(storedPlan) ? storedPlan : 'eterno';
+  });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
 
@@ -49,6 +52,8 @@ export default function PlansPage() {
     setError('');
     trackEvent('checkout_start');
     trackEvent('plan_select', { plan: selected });
+    sessionStorage.setItem('selected_plan', selected);
+    trackMetaInitiateCheckout(selected, pageId);
 
     try {
       const { url, sessionId } = await api.checkout.createSession({
@@ -92,7 +97,11 @@ export default function PlansPage() {
             <button
               key={p.key}
               className={`${styles.planCard} ${selected === p.key ? styles.planSelected : ''} ${p.featured ? styles.planFeatured : ''}`}
-              onClick={() => { setSelected(p.key); trackEvent('plan_select', { plan: p.key }); }}
+              onClick={() => {
+                setSelected(p.key);
+                sessionStorage.setItem('selected_plan', p.key);
+                trackEvent('plan_select', { plan: p.key });
+              }}
             >
               {p.featured && <span className={styles.badge}>♥ Mais escolhido</span>}
               <div className={styles.planName}>{p.name}</div>

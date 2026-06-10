@@ -1,11 +1,29 @@
 import type { UmamiEventName } from '../shared/index';
 
+export type PlanKey = 'sempre' | 'eterno';
+
+type MetaEventName = 'PageView' | 'InitiateCheckout' | 'Purchase';
+type MetaEventParams = {
+  content_ids?: string[];
+  content_name?: string;
+  content_type?: string;
+  currency?: 'BRL';
+  num_items?: number;
+  page_id?: string;
+  value?: number;
+};
+
+const PLAN_META: Record<PlanKey, { name: string; value: number }> = {
+  sempre: { name: 'Somos Eternos', value: 27.9 },
+  eterno: { name: 'Eterno', value: 37.9 },
+};
+
 declare global {
   interface Window {
     umami?: {
       track: (event: string, data?: Record<string, unknown>) => void;
     };
-    fbq?: (command: 'track', event: 'PageView') => void;
+    fbq?: (command: 'track', event: MetaEventName, params?: MetaEventParams) => void;
   }
 }
 
@@ -35,8 +53,41 @@ export function initUmami() {
 }
 
 export function trackMetaPageView() {
+  trackMetaEvent('PageView');
+}
+
+export function isPlanKey(plan: string | null | undefined): plan is PlanKey {
+  return plan === 'sempre' || plan === 'eterno';
+}
+
+export function getPlanMeta(plan: PlanKey) {
+  return PLAN_META[plan];
+}
+
+function planEventParams(plan: PlanKey, pageId?: string): MetaEventParams {
+  const meta = getPlanMeta(plan);
+  return {
+    content_ids: [plan],
+    content_name: meta.name,
+    content_type: 'product',
+    currency: 'BRL',
+    num_items: 1,
+    value: meta.value,
+    ...(pageId ? { page_id: pageId } : {}),
+  };
+}
+
+export function trackMetaInitiateCheckout(plan: PlanKey, pageId?: string) {
+  trackMetaEvent('InitiateCheckout', planEventParams(plan, pageId));
+}
+
+export function trackMetaPurchase(plan: PlanKey, pageId?: string) {
+  trackMetaEvent('Purchase', planEventParams(plan, pageId));
+}
+
+function trackMetaEvent(event: MetaEventName, params?: MetaEventParams) {
   try {
-    window.fbq?.('track', 'PageView');
+    window.fbq?.('track', event, params);
   } catch {
     // Meta Pixel should never break routing
   }

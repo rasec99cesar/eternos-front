@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { Link, useNavigate, useSearchParams } from 'react-router-dom';
 import { api } from '../services/api';
-import { trackEvent } from '../utils/analytics';
+import { isPlanKey, trackEvent, trackMetaPurchase } from '../utils/analytics';
 import type { CheckoutConfirmationResponse } from '../shared/index';
 import styles from './PaymentApproved.module.css';
 
@@ -55,6 +55,13 @@ export default function PaymentApprovedPage() {
 
       if (result.status === 'paid') {
         trackEvent('payment_confirmed');
+        const paidPageId = result.pageId || pageId;
+        const selectedPlan = sessionStorage.getItem('selected_plan');
+        const purchaseKey = `meta_purchase_tracked:${sessionId || paidPageId || 'unknown'}`;
+        if (isPlanKey(selectedPlan) && !sessionStorage.getItem(purchaseKey)) {
+          trackMetaPurchase(selectedPlan, paidPageId || undefined);
+          sessionStorage.setItem(purchaseKey, '1');
+        }
         sessionStorage.removeItem('checkout_session_id');
         const target = result.editorUrl || `/editor/${result.pageId || pageId}`;
         navigate(target, { replace: true });
