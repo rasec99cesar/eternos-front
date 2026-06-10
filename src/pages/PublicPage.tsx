@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { api } from '../services/api';
 import { trackEvent } from '../utils/analytics';
+import { applySeo } from '../utils/seo';
 import type { CouplePage } from '../shared/index';
 import CouplePageRenderer from '../components/CouplePageRenderer';
 import styles from './PublicPage.module.css';
@@ -19,10 +20,24 @@ export default function PublicPageView() {
       .then((p) => {
         setPage(p);
         trackEvent('public_page_view');
-        document.title = `${p.personOneName} & ${p.personTwoName} — Somos Eternos`;
-        document.querySelector('meta[name="description"]')?.setAttribute('content', p.mainText ?? p.title);
-        document.querySelector('meta[property="og:title"]')?.setAttribute('content', `${p.personOneName} & ${p.personTwoName}`);
-        document.querySelector('meta[property="og:description"]')?.setAttribute('content', p.mainText ?? '');
+        const title = `${p.personOneName} & ${p.personTwoName} | Somos Eternos`;
+        const description = p.mainText || p.title || 'Uma história eternizada em uma página personalizada.';
+        applySeo({
+          title,
+          description,
+          path: `/p/${p.slug}`,
+          image: p.assets?.[0]?.url ?? undefined,
+          type: 'article',
+          noIndex: p.privacy !== 'public' || p.status !== 'published',
+          jsonLd: {
+            '@context': 'https://schema.org',
+            '@type': 'WebPage',
+            name: title,
+            description,
+            datePublished: p.publishedAt,
+            dateModified: p.updatedAt,
+          },
+        });
       })
       .catch(() => setNotFound(true))
       .finally(() => setLoading(false));

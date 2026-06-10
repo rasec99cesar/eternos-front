@@ -3,10 +3,19 @@ import { useEffect } from 'react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { AuthProvider } from './contexts/AuthContext';
 import { ProtectedRoute } from './components/ProtectedRoute';
+import { applySeo, getRouteSeo } from './utils/seo';
 
 function ScrollToTop() {
   const { pathname } = useLocation();
   useEffect(() => { window.scrollTo(0, 0); }, [pathname]);
+  return null;
+}
+
+function SeoManager() {
+  const { pathname } = useLocation();
+  useEffect(() => {
+    applySeo(getRouteSeo(pathname));
+  }, [pathname]);
   return null;
 }
 
@@ -36,6 +45,7 @@ export default function App() {
       <BrowserRouter>
         <AuthProvider>
           <ScrollToTop />
+          <SeoManager />
           <Routes>
             {/* Public */}
             <Route path="/" element={<LandingPage />} />

@@ -32,10 +32,16 @@ npm run dev            # http://localhost:5173
 
 ```env
 VITE_API_URL=http://localhost:3000        # URL do backend
-VITE_APP_URL=http://localhost:5173
+VITE_APP_URL=http://localhost:5173        # URL pública do frontend; usada em canonical, sitemap e robots.txt
 VITE_STRIPE_PUBLIC_KEY=pk_test_...
 VITE_UMAMI_SRC=                          # opcional
 VITE_UMAMI_WEBSITE_ID=                   # opcional
+```
+
+Em produção, defina `VITE_APP_URL` com o domínio final, por exemplo:
+
+```env
+VITE_APP_URL=https://somoseternos.com.br
 ```
 
 ## Deploy (Cloudflare Pages)
@@ -50,3 +56,7 @@ O arquivo `public/_redirects` já configura o fallback SPA:
 ```
 /*    /index.html   200
 ```
+
+Durante o build, `scripts/generate-seo-files.mjs` cria `dist/sitemap.xml` e
+`dist/robots.txt` usando `VITE_APP_URL`. Se o domínio mudar, atualize essa
+variável no Cloudflare Pages e rode um novo deploy.

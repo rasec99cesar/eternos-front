@@ -2,6 +2,7 @@ import { useEffect } from 'react';
 import { Link, useParams, Navigate } from 'react-router-dom';
 import { useCounter, pad } from '../hooks/useCounter';
 import VinylPlayer from '../components/VinylPlayer';
+import { applySeo } from '../utils/seo';
 import styles from './ExamplePage.module.css';
 
 /* ── types ──────────────────────────────────────────────────────── */
@@ -198,7 +199,13 @@ export default function ExamplePage() {
 
   useEffect(() => {
     if (data) {
-      document.title = data.docTitle;
+      applySeo({
+        title: data.docTitle,
+        description: data.since,
+        path: `/exemplos/${slug}`,
+        image: data.polaroids[3]?.src ?? data.polaroids[0]?.src,
+        type: 'article',
+      });
       // reveal on scroll
       const observer = new IntersectionObserver(
         (entries) => entries.forEach((e) => { if (e.isIntersecting) { e.target.classList.add('in'); observer.unobserve(e.target); } }),

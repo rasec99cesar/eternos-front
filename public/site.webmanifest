@@ -1,0 +1,16 @@
+{
+  "name": "Somos Eternos",
+  "short_name": "Somos Eternos",
+  "description": "Crie uma pagina personalizada para eternizar a historia de voces.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#fff8f6",
+  "theme_color": "#BC4257",
+  "icons": [
+    {
+      "src": "/favicon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml"
+    }
+  ]
+}
