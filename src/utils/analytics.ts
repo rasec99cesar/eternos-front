@@ -3,6 +3,7 @@ import type { UmamiEventName } from '../shared/index';
 export type PlanKey = 'sempre' | 'eterno';
 
 type MetaEventName = 'PageView' | 'InitiateCheckout' | 'Purchase';
+type RedditEventName = 'PageVisit';
 type MetaEventParams = {
   content_ids?: string[];
   content_name?: string;
@@ -26,8 +27,10 @@ declare global {
   interface Window {
     umami?: {
       track: (event: string, data?: Record<string, unknown>) => void;
+      identify?: (uniqueIdOrData: string | Record<string, unknown>, data?: Record<string, unknown>) => void;
     };
     fbq?: (command: 'track', event: MetaEventName, params?: MetaEventParams) => void;
+    rdt?: (command: 'track', event: RedditEventName) => void;
   }
 }
 
@@ -40,6 +43,17 @@ export function trackEvent(name: UmamiEventName, data?: Record<string, string | 
     window.umami?.track(name, data);
   } catch {
     // Silently fail — analytics should never break the app
+  }
+}
+
+export function identifyUmamiSession(email: string) {
+  const normalizedEmail = email.trim().toLowerCase();
+  if (!normalizedEmail) return;
+
+  try {
+    window.umami?.identify?.(normalizedEmail, { email: normalizedEmail });
+  } catch {
+    // Umami session data should never break auth
   }
 }
 
@@ -58,6 +72,14 @@ export function initUmami() {
 
 export function trackMetaPageView() {
   trackMetaEvent('PageView');
+}
+
+export function trackRedditPageVisit() {
+  try {
+    window.rdt?.('track', 'PageVisit');
+  } catch {
+    // Reddit Pixel should never break routing
+  }
 }
 
 export function isPlanKey(plan: string | null | undefined): plan is PlanKey {

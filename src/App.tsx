@@ -4,7 +4,7 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { AuthProvider } from './contexts/AuthContext';
 import { ProtectedRoute } from './components/ProtectedRoute';
 import { applySeo, getRouteSeo } from './utils/seo';
-import { trackMetaPageView } from './utils/analytics';
+import { trackMetaPageView, trackRedditPageVisit } from './utils/analytics';
 
 function ScrollToTop() {
   const { pathname } = useLocation();
@@ -31,6 +31,21 @@ function MetaPixelPageView() {
       return;
     }
     trackMetaPageView();
+  }, [pathname, search]);
+  return null;
+}
+
+function RedditPixelPageVisit() {
+  const { pathname, search } = useLocation();
+  const didSkipInitialPageVisit = useRef(false);
+
+  useEffect(() => {
+    if (!window.rdt) return;
+    if (!didSkipInitialPageVisit.current) {
+      didSkipInitialPageVisit.current = true;
+      return;
+    }
+    trackRedditPageVisit();
   }, [pathname, search]);
   return null;
 }
@@ -63,6 +78,7 @@ export default function App() {
           <ScrollToTop />
           <SeoManager />
           <MetaPixelPageView />
+          <RedditPixelPageVisit />
           <Routes>
             {/* Public */}
             <Route path="/" element={<LandingPage />} />

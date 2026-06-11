@@ -2,7 +2,7 @@ import { useState, useRef, useEffect } from 'react';
 import { useNavigate, useSearchParams, Link } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import { api } from '../services/api';
-import { isPlanKey, trackEvent } from '../utils/analytics';
+import { identifyUmamiSession, isPlanKey, trackEvent } from '../utils/analytics';
 import styles from './Auth.module.css';
 
 type Step = 'email' | 'code';
@@ -42,12 +42,15 @@ export default function AuthPage() {
 
   async function handleEmailSubmit(e: React.FormEvent) {
     e.preventDefault();
-    if (!email.trim()) { setError('Digite seu e-mail.'); return; }
+    const normalizedEmail = email.trim().toLowerCase();
+    if (!normalizedEmail) { setError('Digite seu e-mail.'); return; }
     setLoading(true);
     setError('');
     trackEvent('auth_email_submit');
     try {
-      await api.auth.requestCode(email.trim());
+      await api.auth.requestCode(normalizedEmail);
+      setEmail(normalizedEmail);
+      identifyUmamiSession(normalizedEmail);
       trackEvent('auth_code_sent');
       setStep('code');
       startCooldown();
