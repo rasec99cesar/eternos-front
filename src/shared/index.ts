@@ -228,4 +228,11 @@ export type UmamiEventName =
   // Public page
   | 'public_page_view'
   | 'public_page_share_click'
-  | 'public_page_whatsapp_click';
+  | 'public_page_whatsapp_click'
+  | 'public_page_story_click'
+  | 'public_page_story_share'
+  | 'public_page_story_download'
+  | 'public_page_story_error'
+  // QR code
+  | 'qr_code_open'
+  | 'qr_code_download';

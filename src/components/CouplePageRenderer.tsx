@@ -1,7 +1,9 @@
+import { useRef } from 'react';
 import { Link } from 'react-router-dom';
 import type { CouplePage } from '../shared/index';
 import { useCounter, pad } from '../hooks/useCounter';
 import VinylPlayer from './VinylPlayer';
+import ShareStoryButton from './ShareStoryButton';
 import styles from '../pages/PublicPage.module.css';
 
 interface StoryBlock { date: string; title: string; text: string; }
@@ -81,9 +83,10 @@ export default function CouplePageRenderer({
   const hasScene = centerPhoto || p1 || p2 || p3;
   const hasStory = storyEyebrow || storyH2 || blocks.some((b) => b.title || b.text);
   const revealClass = previewOnly ? 'reveal in' : 'reveal';
+  const rootRef = useRef<HTMLDivElement>(null);
 
   return (
-    <div data-theme={theme} className={styles.page}>
+    <div data-theme={theme} className={styles.page} ref={rootRef}>
       {showChrome && (
         <header className={styles.cbar}>
           <div className={`${styles.cwrap} ${styles.cbarIn}`}>
@@ -91,6 +94,15 @@ export default function CouplePageRenderer({
             <div className={styles.cbarShare}>
               {onCopy && <button className={styles.cbarCopy} type="button" onClick={onCopy}>{copied ? '✓ Copiado' : 'Copiar link'}</button>}
               {onShareWhatsapp && <button className={styles.cbarWa} type="button" onClick={onShareWhatsapp}>WhatsApp</button>}
+              <ShareStoryButton
+                personOneName={page.personOneName}
+                personTwoName={page.personTwoName}
+                startDate={page.startDate}
+                sinceText={sinceText}
+                photoUrl={centerPhoto?.url ?? null}
+                pageUrl={page.publicUrl || window.location.href}
+                containerRef={rootRef}
+              />
             </div>
           </div>
         </header>

@@ -5,6 +5,7 @@ import { trackEvent } from '../utils/analytics';
 import { useCounter, pad } from '../hooks/useCounter';
 import type { CouplePage, PageAsset, PageStatus } from '../shared/index';
 import CouplePageRenderer from '../components/CouplePageRenderer';
+import QrCodeModal from '../components/QrCodeModal';
 import styles from './Editor.module.css';
 
 /* ── types ──────────────────────────────────────────────────────── */
@@ -447,6 +448,8 @@ export default function EditorPage() {
   const [activeTab, setActiveTab] = useState<'edit' | 'preview'>('edit');
   const [openSecs, setOpenSecs] = useState<Set<number>>(new Set([1, 2]));
   const [pageStatus, setPageStatus] = useState<PageStatus>('draft');
+  const [publicUrl, setPublicUrl] = useState<string | null>(null);
+  const [showQr, setShowQr] = useState(false);
 
   /* form state */
   const [title, setTitle] = useState('');
@@ -505,6 +508,7 @@ export default function EditorPage() {
           sessionStorage.setItem('selected_plan', page.plan);
         }
         setPageStatus(page.status);
+        setPublicUrl(page.publicUrl ?? null);
         setTitle(page.title);
         setSlug(page.slug);
         setPersonOne(page.personOneName);
@@ -676,6 +680,7 @@ export default function EditorPage() {
       if (pageStatus === 'paid') {
         const published = await api.pages.publish(pageId);
         setPageStatus(published.status);
+        setPublicUrl(published.publicUrl ?? null);
         trackEvent('publish_success');
         navigate(`/p/${published.slug}`);
         return;
@@ -755,12 +760,15 @@ export default function EditorPage() {
     async function handleRepublish() {
       if (!pageId) return;
       try {
-        await api.pages.publish(pageId);
+        const published = await api.pages.publish(pageId);
+        setPublicUrl(published.publicUrl ?? null);
         navigate('/minhas-paginas');
       } catch {
         alert('Não foi possível republicar a página. Tente novamente.');
       }
     }
+    const viewUrl = publicUrl || `/p/${slug}`;
+    const accentColor = THEMES.find((t) => t.key === theme)?.chips[2] ?? '#BC4257';
     return (
       <div className={styles.edBody}>
         <header className={styles.edTop}>
@@ -780,13 +788,29 @@ export default function EditorPage() {
                 <button className="btn btn--primary btn--lg" onClick={handleRepublish}>Publicar novamente</button>
               ) : (
                 <>
-                  <a href={`/p/${pageId}`} target="_blank" rel="noopener noreferrer" className="btn btn--primary btn--lg">Ver página →</a>
+                  <a href={viewUrl} target="_blank" rel="noopener noreferrer" className="btn btn--primary btn--lg">Ver página →</a>
+                  <button
+                    className="btn btn--ghost-dark btn--lg"
+                    type="button"
+                    onClick={() => { setShowQr(true); trackEvent('qr_code_open'); }}
+                  >
+                    QR Code
+                  </button>
                   <button className="btn btn--ghost-dark btn--lg" onClick={handleHide}>Ocultar página</button>
                 </>
               )}
             </div>
           </div>
         </main>
+        {showQr && !isHidden && (
+          <QrCodeModal
+            url={viewUrl}
+            accentColor={accentColor}
+            personOne={personOne}
+            personTwo={personTwo}
+            onClose={() => setShowQr(false)}
+          />
+        )}
       </div>
     );
   }

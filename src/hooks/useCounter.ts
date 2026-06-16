@@ -7,7 +7,7 @@ interface CounterValue {
   secs: number;
 }
 
-function calcDiff(startDate: Date): CounterValue {
+export function calcDiff(startDate: Date): CounterValue {
   const diff = Math.max(0, Date.now() - startDate.getTime());
   const totalSec = Math.floor(diff / 1000);
   return {

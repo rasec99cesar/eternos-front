@@ -41,21 +41,58 @@
 
 .cbarShare { display: flex; gap: 8px; align-items: center; }
 
-.cbarCopy, .cbarWa {
+.cbarCopy, .cbarWa, .cbarStory {
   font-family: var(--ui);
   font-size: 13px;
   font-weight: 500;
   border-radius: 99px;
   padding: 8px 16px;
   cursor: pointer;
-  transition: background .2s, color .2s;
+  transition: background .2s, color .2s, opacity .2s;
   border: 1.5px solid var(--line);
   background: transparent;
   color: var(--ink-2);
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
 }
 .cbarCopy:hover { background: var(--bg-2); color: var(--ink); }
 .cbarWa { color: #25d366; border-color: rgba(37,211,102,.3); }
 .cbarWa:hover { background: rgba(37,211,102,.08); }
+.cbarStory { color: var(--terra); border-color: var(--terra-light); }
+.cbarStory:hover { background: var(--terra-pale); }
+.cbarStory:disabled { opacity: .6; cursor: default; }
+.cbarStory svg { flex-shrink: 0; }
+
+@media (max-width: 480px) {
+  .cbarShare { gap: 6px; }
+  .cbarCopy, .cbarWa, .cbarStory { padding: 8px 10px; }
+  .cbarStoryLabel { display: none; }
+}
+
+.storyToast {
+  position: fixed;
+  left: 50%;
+  bottom: 28px;
+  transform: translateX(-50%);
+  z-index: 50;
+  background: var(--ink);
+  color: var(--bg);
+  font-family: var(--ui);
+  font-size: 14px;
+  font-weight: 500;
+  padding: 14px 22px;
+  border-radius: 99px;
+  box-shadow: var(--shadow-lift);
+  max-width: calc(100vw - 40px);
+  text-align: center;
+  animation: storyToastIn .25s ease;
+}
+
+@keyframes storyToastIn {
+  from { opacity: 0; transform: translate(-50%, 10px); }
+  to { opacity: 1; transform: translate(-50%, 0); }
+}
 
 /* ---- hero ---- */
 .chero {
