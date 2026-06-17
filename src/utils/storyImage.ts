@@ -1,4 +1,3 @@
-import QRCodeStyling from 'qr-code-styling';
 import { calcDiff } from '../hooks/useCounter';
 
 export interface StoryImageColors {
@@ -216,7 +215,7 @@ export async function generateStoryImage(input: StoryImageInput): Promise<Blob |
   try { (ctx as unknown as { letterSpacing: string }).letterSpacing = '0px'; } catch { /* unsupported */ }
 
   // ── footer ───────────────────────────────────────────────────
-  const footerY = 1690, footerH = 230;
+  const footerY = 1720;
   ctx.fillStyle = colors.ink;
   ctx.beginPath();
   ctx.moveTo(0, footerY + 40);
@@ -228,50 +227,18 @@ export async function generateStoryImage(input: StoryImageInput): Promise<Blob |
   ctx.closePath();
   ctx.fill();
 
-  const qrBox = 150;
-  const qrX = W - 90 - qrBox;
-  const qrY = footerY + (footerH - qrBox) / 2;
-  let qrImg: HTMLImageElement | null = null;
-  try {
-    const qr = new QRCodeStyling({
-      width: qrBox * 3,
-      height: qrBox * 3,
-      data: input.pageUrl,
-      type: 'canvas',
-      margin: 8,
-      dotsOptions: { type: 'rounded', color: colors.ink },
-      cornersSquareOptions: { type: 'extra-rounded', color: colors.ink },
-      backgroundOptions: { color: '#ffffff' },
-    });
-    const blob = await qr.getRawData('png');
-    if (blob instanceof Blob) {
-      const qrUrl = URL.createObjectURL(blob);
-      qrImg = await loadImage(qrUrl);
-      URL.revokeObjectURL(qrUrl);
-    }
-  } catch { /* QR is a bonus — skip if it fails */ }
-
-  roundedRect(ctx, qrX, qrY, qrBox, qrBox, 16);
-  ctx.fillStyle = '#fff';
-  ctx.fill();
-  if (qrImg) {
-    ctx.save();
-    roundedRect(ctx, qrX + 10, qrY + 10, qrBox - 20, qrBox - 20, 10);
-    ctx.clip();
-    ctx.drawImage(qrImg, qrX + 10, qrY + 10, qrBox - 20, qrBox - 20);
-    ctx.restore();
-  }
-
-  ctx.textAlign = 'left';
-  ctx.font = '600 20px "DM Sans", sans-serif';
+  ctx.textAlign = 'center';
+  ctx.font = '500 22px "DM Sans", sans-serif';
   ctx.fillStyle = colors.terraLight;
-  try { (ctx as unknown as { letterSpacing: string }).letterSpacing = '2px'; } catch { /* unsupported */ }
-  ctx.fillText('A NOSSA HISTÓRIA CONTINUA EM', 90, footerY + 90);
+  try { (ctx as unknown as { letterSpacing: string }).letterSpacing = '3px'; } catch { /* unsupported */ }
+  ctx.fillText('A NOSSA HISTÓRIA CONTINUA EM', CX, footerY + 68);
   try { (ctx as unknown as { letterSpacing: string }).letterSpacing = '0px'; } catch { /* unsupported */ }
-  ctx.font = '700 32px "DM Sans", sans-serif';
-  ctx.fillStyle = '#fff';
+
   const urlText = input.pageUrl.replace(/^https?:\/\//, '');
-  ctx.fillText(ellipsize(ctx, urlText, qrX - 90 - 40), 90, footerY + 140);
+  const urlSize = fitFontSize(ctx, urlText, W - 120, 38, 22, (s) => `700 ${s}px "DM Sans", sans-serif`);
+  ctx.font = `700 ${urlSize}px "DM Sans", sans-serif`;
+  ctx.fillStyle = '#fff';
+  ctx.fillText(urlText, CX, footerY + 148);
 
   return new Promise((resolve) => {
     canvas.toBlob((blob) => resolve(blob), 'image/png', 0.95);

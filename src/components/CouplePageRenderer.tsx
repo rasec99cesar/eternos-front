@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import type { CouplePage } from '../shared/index';
 import { useCounter, pad } from '../hooks/useCounter';
 import VinylPlayer from './VinylPlayer';
-import ShareStoryButton from './ShareStoryButton';
+import ShareMenu from './ShareMenu';
 import styles from '../pages/PublicPage.module.css';
 
 interface StoryBlock { date: string; title: string; text: string; }
@@ -39,16 +39,10 @@ function LiveCounter({ startDate, label }: { startDate: string; label: string })
 
 export default function CouplePageRenderer({
   page,
-  copied = false,
-  onCopy,
-  onShareWhatsapp,
   showChrome = true,
   previewOnly = false,
 }: {
   page: CouplePage;
-  copied?: boolean;
-  onCopy?: () => void;
-  onShareWhatsapp?: () => void;
   showChrome?: boolean;
   previewOnly?: boolean;
 }) {
@@ -91,19 +85,15 @@ export default function CouplePageRenderer({
         <header className={styles.cbar}>
           <div className={`${styles.cwrap} ${styles.cbarIn}`}>
             <Link to="/" className={styles.cbarBrand}>Somos Eternos</Link>
-            <div className={styles.cbarShare}>
-              {onCopy && <button className={styles.cbarCopy} type="button" onClick={onCopy}>{copied ? '✓ Copiado' : 'Copiar link'}</button>}
-              {onShareWhatsapp && <button className={styles.cbarWa} type="button" onClick={onShareWhatsapp}>WhatsApp</button>}
-              <ShareStoryButton
-                personOneName={page.personOneName}
-                personTwoName={page.personTwoName}
-                startDate={page.startDate}
-                sinceText={sinceText}
-                photoUrl={centerPhoto?.url ?? null}
-                pageUrl={page.publicUrl || window.location.href}
-                containerRef={rootRef}
-              />
-            </div>
+            <ShareMenu
+              personOneName={page.personOneName}
+              personTwoName={page.personTwoName}
+              startDate={page.startDate}
+              sinceText={sinceText}
+              photoUrl={centerPhoto?.url ?? null}
+              pageUrl={page.publicUrl || window.location.href}
+              containerRef={rootRef}
+            />
           </div>
         </header>
       )}

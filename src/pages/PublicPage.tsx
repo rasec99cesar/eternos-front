@@ -12,7 +12,6 @@ export default function PublicPageView() {
   const [page, setPage] = useState<CouplePage | null>(null);
   const [loading, setLoading] = useState(true);
   const [notFound, setNotFound] = useState(false);
-  const [copied, setCopied] = useState(false);
 
   useEffect(() => {
     if (!slug) return;
@@ -55,20 +54,6 @@ export default function PublicPageView() {
     return () => observer.disconnect();
   }, [page]);
 
-  async function copyLink() {
-    await navigator.clipboard.writeText(window.location.href).catch(() => {});
-    setCopied(true);
-    setTimeout(() => setCopied(false), 2000);
-    trackEvent('public_page_share_click');
-  }
-
-  function shareWhatsapp() {
-    const title = page ? `${page.personOneName} & ${page.personTwoName}` : '';
-    const text = encodeURIComponent(`${title} 🤍 ${window.location.href}`);
-    window.open(`https://wa.me/?text=${text}`, '_blank');
-    trackEvent('public_page_whatsapp_click');
-  }
-
   if (loading) return (
     <div style={{ display: 'grid', placeItems: 'center', minHeight: '100vh', background: 'var(--bg)' }}>
       <span className="spinner spinner--dark" style={{ width: 36, height: 36 }} />
@@ -86,5 +71,5 @@ export default function PublicPageView() {
 
   if (!page) return null;
 
-  return <CouplePageRenderer page={page} copied={copied} onCopy={copyLink} onShareWhatsapp={shareWhatsapp} />;
+  return <CouplePageRenderer page={page} />;
 }

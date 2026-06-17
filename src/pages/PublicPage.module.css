@@ -41,33 +41,70 @@
 
 .cbarShare { display: flex; gap: 8px; align-items: center; }
 
-.cbarCopy, .cbarWa, .cbarStory {
+/* ---- share menu dropdown ---- */
+.shareMenuWrap { position: relative; }
+
+.shareMenuBtn {
   font-family: var(--ui);
   font-size: 13px;
   font-weight: 500;
   border-radius: 99px;
-  padding: 8px 16px;
+  padding: 8px 14px;
   cursor: pointer;
-  transition: background .2s, color .2s, opacity .2s;
   border: 1.5px solid var(--line);
   background: transparent;
   color: var(--ink-2);
   display: inline-flex;
   align-items: center;
   gap: 6px;
+  transition: background .2s, color .2s;
 }
-.cbarCopy:hover { background: var(--bg-2); color: var(--ink); }
-.cbarWa { color: #25d366; border-color: rgba(37,211,102,.3); }
-.cbarWa:hover { background: rgba(37,211,102,.08); }
-.cbarStory { color: var(--terra); border-color: var(--terra-light); }
-.cbarStory:hover { background: var(--terra-pale); }
-.cbarStory:disabled { opacity: .6; cursor: default; }
-.cbarStory svg { flex-shrink: 0; }
+.shareMenuBtn:hover { background: var(--bg-2); color: var(--ink); }
+.shareMenuBtn:disabled { opacity: .6; cursor: default; }
+
+.shareDropdown {
+  position: absolute;
+  top: calc(100% + 8px);
+  right: 0;
+  background: var(--bg-card);
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  box-shadow: var(--shadow-lift);
+  min-width: 192px;
+  z-index: 50;
+  overflow: hidden;
+  animation: dropIn .14s ease;
+}
+
+@keyframes dropIn {
+  from { opacity: 0; transform: translateY(-5px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.shareDropItem {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 13px 16px;
+  font-family: var(--ui);
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--ink);
+  background: transparent;
+  border: none;
+  width: 100%;
+  cursor: pointer;
+  text-align: left;
+  transition: background .15s;
+}
+.shareDropItem + .shareDropItem { border-top: 1px solid var(--line); }
+.shareDropItem:hover { background: var(--bg-2); }
+.shareDropItem:disabled { opacity: .5; cursor: default; }
+.shareDropItemStory { color: var(--terra); }
 
 @media (max-width: 480px) {
-  .cbarShare { gap: 6px; }
-  .cbarCopy, .cbarWa, .cbarStory { padding: 8px 10px; }
-  .cbarStoryLabel { display: none; }
+  .shareMenuLabel { display: none; }
+  .shareMenuBtn { padding: 8px 10px; }
 }
 
 .storyToast {
